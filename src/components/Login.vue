@@ -30,7 +30,6 @@
           </div>
         </md-card-content>
         <md-card-actions>
-
           <md-button type="submit" class="md-primary" :disabled="sending">Login</md-button>
         </md-card-actions>
       </md-card>
@@ -39,7 +38,20 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import {MdCardHeader, MdField, MdCardContent, MdInput, MdButton, MdCardActions} from 'vue-material/dist/components'
 import {validationMixin} from 'vuelidate'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+
+Vue.use(MdCardHeader)
+Vue.use(MdField)
+Vue.use(MdCardContent)
+Vue.use(MdButton)
+Vue.use(MdInput)
+Vue.use(MdCardActions)
+
 import {
   required,
   // email,

@@ -1,48 +1,85 @@
 <template>
-  <div class="md-layout md-size-100 login">
-    <form v-if="!sent" class="md-layout md-alignment-center" novalidate @submit.prevent="passwordResetRequest()">
-      <md-card class="md-layout-item  md-size-50 md-small-size-100 ">
-        <md-card-header>
-          <div class="md-title">Lost password</div>
-        </md-card-header>
-        <md-card-content>
-          <div class="md-layout-item md-small-size-100">
-            <md-field :class="getValidationClass('email')">
-              <label for="email">Email</label>
-              <md-input name="email" id="email" autocomplete="email" v-model="form.email"
-                        :disabled="sending"/>
-              <span class="md-error" v-if="!$v.form.email.required">The email is required</span>
-            </md-field>
-          </div>
-          <div style="text-align: right">
-            <router-link to="login">Login</router-link>
-          </div>
-        </md-card-content>
-        <md-card-actions>
-          <md-button type="submit" class="md-primary" :disabled="sending">Request password reset</md-button>
-        </md-card-actions>
-      </md-card>
-    </form>
-    <div v-else class="md-layout md-alignment-center">
-      <div class="alert alert--success md-subheading">
-        To entered an email address has been submitted a link to reset the password.
-      </div>
-    </div>
-  </div>
+  <v-container>
+    <v-row no-gutters justify="center">
+      <v-col
+          cols="12"
+          sm="6"
+          xl="4"
+      >
+        <v-card
+            class="pa-2"
+            outlined
+            tile
+            v-if="sent"
+        >
+          <v-alert
+              dense
+              outlined
+              prominent
+              text
+              type="success"
+          >
+            To entered an email address has been submitted a link to reset the password.
+          </v-alert>
+
+          <v-btn
+              color="primary"
+              depressed
+              elevation="2"
+              to="login"
+          >Login</v-btn>
+
+        </v-card>
+        <v-card
+            class="pa-2"
+            outlined
+            tile
+            v-else
+        >
+          <v-progress-linear
+              indeterminate
+              color="blue darken-2"
+              v-if="sending"
+          ></v-progress-linear>
+
+          <v-form
+              ref="form"
+              v-model="valid"
+              lazy-validation
+          >
+            <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                :disabled="sending"
+                label="Email"
+                required
+            ></v-text-field>
+
+
+            <div style="text-align: right">
+              <router-link to="login">Login</router-link>
+            </div>
+
+            <v-btn
+                :disabled="!valid || sending"
+                color="success"
+                class="mr-4"
+                @click="passwordResetRequest"
+            >
+              reset password
+            </v-btn>
+
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import {validationMixin} from 'vuelidate'
-import {
-  required,
-  email,
-  // minLength,
-  // maxLength
-} from 'vuelidate/lib/validators'
 
 export default {
   name: "LostPassword",
-  mixins: [validationMixin],
   data: () => ({
     sending: false,
     sent: false,
@@ -50,37 +87,20 @@ export default {
       content: null,
       status: null
     },
-    form: {
-      email: null,
-    }
-  }),
-  validations: {
-    form: {
-      email: {
-        required,
-        email
-      },
-    }
-  },
-  methods: {
-    // L00162996@student.lyit.ie
-    getValidationClass(fieldName) {
-      const field = this.$v.form[fieldName]
-      if (field) {
-        return {
-          'md-invalid': field.$invalid && field.$dirty
-        }
-      }
-    },
-    passwordResetRequest() {
-      this.$v.$touch()
-      if (this.$v.$invalid) {
-        return
-      }
+    email: '',
+    emailRules: [
+      v => !!v || 'E-mail is required',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    ],
+    valid: true,
 
+  }),
+
+  methods: {
+    passwordResetRequest() {
       this.sending = true
-      this.axios.post('/api/v1/password-reset/', {
-        email: this.form.email
+      this.axios.post('/api/v1/users/password-reset/', {
+        email: this.email
       }).then(() => {
 
       }).finally(() => {
@@ -88,6 +108,9 @@ export default {
         this.sent = true
       })
     }
+  },
+  mounted() {
+    this.$store.commit('setTitle', "Lost password")
   }
 }
 </script>

@@ -1,103 +1,143 @@
 <template>
-  <div class="md-layout md-size-100 login">
-    <form v-if="!sent" class="md-layout md-alignment-center" novalidate @submit.prevent="resetPassword()">
-      <md-card class="md-layout-item  md-size-50 md-small-size-100 ">
-        <md-card-header>
-          <div class="md-title">Reset password</div>
-        </md-card-header>
-        <md-card-content>
-          <div v-if="msg.status" class="alert" :class="`alert--${msg.status}`" v-html="msg.content"/>
-          <div class="md-layout md-gutter">
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('username')">
-                <label for="password">Password</label>
-                <md-input type="password" name="password" id="password" v-model="form.password"
-                          :disabled="sending"/>
-                <span class="md-error" v-if="!$v.form.password.required">The password is required</span>
-                <span class="md-error" v-else-if="!$v.form.password.minlength">The password must have at least 8 characters</span>
-              </md-field>
-            </div>
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('password')">
-                <label for="repeat">Repeat Password</label>
-                <md-input type="password" name="repeat" id="repeat" v-model="form.repeat"
-                          :disabled="sending"/>
-                <span class="md-error" v-if="!$v.form.repeat.required">The password is required</span>
-                <span class="md-error" v-if="!$v.form.repeat.minlength">The password must have at least 8 characters</span>
-                <span class="md-error" v-else-if="!$v.form.repeat.sameAsPassword">The passwords must be the same</span>
-              </md-field>
-            </div>
-          </div>
-        </md-card-content>
-        <md-card-actions>
+  <v-container>
+    <v-row no-gutters justify="center">
+      <v-col
+          cols="12"
+          sm="6"
+          xl="4"
+      >
+        <v-card
+            class="pa-2"
+            outlined
+            tile
+            v-if="sent"
+        >
+          <v-alert
+              dense
+              outlined
+              prominent
+              text
+              type="success"
+          >
+            The new password have been set.
+          </v-alert>
 
-          <md-button type="submit" class="md-primary" :disabled="sending">Reset password</md-button>
-        </md-card-actions>
-      </md-card>
-    </form>
-    <div v-else class="md-layout md-alignment-center">
-      <div class="alert alert--success md-subheading">
-        The password has been changed <br>
-        <md-button to="/login" class="md-primary" :disabled="sending">Login</md-button>
-      </div>
-    </div>
-  </div>
+          <v-btn
+              color="primary"
+              depressed
+              elevation="2"
+              to="/login"
+          >Login</v-btn>
+
+        </v-card>
+        <v-card
+            class="pa-2"
+            outlined
+            tile
+            v-else
+        >
+          <v-progress-linear
+              indeterminate
+              color="blue darken-2"
+              v-if="sending"
+          ></v-progress-linear>
+          <v-alert
+              v-if="msg.status"
+              dense
+              outlined
+              text
+              :type="msg.status"
+              v-html="msg.content"
+          />
+          <v-form
+              ref="form"
+              v-model="valid"
+              lazy-validation
+          >
+
+            <v-text-field
+                :append-icon="showPass1 ? 'mdi-eye' : 'mdi-eye-off'"
+                v-model="password"
+                :rules="[repeatPasswordRules]"
+                :disabled="sending"
+                @click:append="showPass1 = !showPass1"
+                :type="showPass1 ? 'text' : 'password'"
+                label="Password"
+                required
+            ></v-text-field>
+
+
+            <v-text-field
+                :append-icon="showPass1 ? 'mdi-eye' : 'mdi-eye-off'"
+                v-model="repeatPassword"
+                :rules="[repeatPasswordRules, passwordMath]"
+                :disabled="sending"
+                @click:append="showPass1 = !showPass1"
+                :type="showPass1 ? 'text' : 'password'"
+                label="Repeat password"
+                required
+            ></v-text-field>
+
+            <div style="text-align: right">
+              <router-link to="/login">Login</router-link>
+            </div>
+
+            <v-btn
+                :disabled="!valid || sending"
+                color="success"
+                class="mr-4"
+                @click="resetPassword"
+            >
+              Reset password
+            </v-btn>
+
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import {validationMixin} from 'vuelidate'
-import {
-  required,
-  minLength,
-  sameAs
-} from 'vuelidate/lib/validators'
+
 
 export default {
   name: "ResetPassword",
-  mixins: [validationMixin],
   data: () => ({
+    valid: true,
     sending: false,
     sent: false,
+    showPass1: false,
+    showPass2: false,
     msg: {
       content: null,
       status: null
     },
+    password: '',
+    passwordRules: [
+      v => !!v || 'Password is required',
+    ],
+    repeatPassword: '',
+    repeatPasswordRules: [
+      v => !!v || 'This field is required',
+     // this.passwordMath: () => ('The passwords aren\'t match')
+    ],
     form: {
       password: null,
       repeat: null
     }
   }),
-  validations: {
-    form: {
-      repeat: {
-        required,
-        minLength: minLength(8)
-      },
-      password: {
-        required,
-        sameAsPassword: sameAs('repeat'),
-        minLength: minLength(8)
-      }
-    }
+  computed: {
+    passwordMath() {
+      return () => (this.password === this.repeatPassword) || 'Passwords must match'
+    },
   },
   methods: {
-    getValidationClass(fieldName) {
-      const field = this.$v.form[fieldName]
 
-      if (field) {
-        return {
-          'md-invalid': field.$invalid && field.$dirty
-        }
-      }
-    },
     resetPassword() {
-      this.$v.$touch()
-      if (this.$v.$invalid) {
-        return
-      }
-      this.axios.post('/api/v1/password-reset/confirm/', {
+      this.axios.post('/api/v1/users/password-reset/confirm/', {
         token: this.$route.params.token,
-        password: this.form.password
+        password: this.password
       }).then(() => {
         this.sent = true
       }).catch(() => {
@@ -111,6 +151,9 @@ export default {
 
     }
   },
+  mounted() {
+    this.$store.commit('setTitle', "Reset password")
+  }
 }
 </script>
 

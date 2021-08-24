@@ -1,108 +1,103 @@
 <template>
-  <div class="md-layout md-size-100 login">
-    <form class="md-layout md-alignment-center" novalidate @submit.prevent="auth()">
-      <md-card class="md-layout-item  md-size-50 md-small-size-100 ">
-        <md-card-header>
-          <div class="md-title">Login</div>
-        </md-card-header>
-        <md-card-content>
-          <div v-if="msg.status" class="alert" :class="`alert--${msg.status}`" v-html="msg.content" />
-          <div class="md-layout md-gutter">
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('username')">
-                <label for="username">First Name</label>
-                <md-input name="username" id="username" autocomplete="username" v-model="form.username"
-                          :disabled="sending"/>
-                <span class="md-error" v-if="!$v.form.username.required">The username is required</span>
-              </md-field>
+  <v-container>
+    <v-row no-gutters justify="center">
+      <v-col
+          cols="12"
+          sm="6"
+          xl="4"
+      >
+        <v-card
+            class="pa-2"
+            outlined
+            tile
+        >
+          <v-progress-linear
+              indeterminate
+              color="blue darken-2"
+              v-if="sending"
+          ></v-progress-linear>
+          <v-alert
+              v-if="msg.status"
+              dense
+              outlined
+              text
+              :type="msg.status"
+              v-html="msg.content"
+          />
+          <v-form
+              ref="form"
+              v-model="valid"
+              lazy-validation
+          >
+            <v-text-field
+                v-model="username"
+                :rules="usernameRules"
+                :disabled="sending"
+                label="Username"
+                required
+            ></v-text-field>
+
+            <v-text-field
+                :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                v-model="password"
+                :rules="passwordRules"
+                :disabled="sending"
+                @click:append="showPass = !showPass"
+                :type="showPass ? 'text' : 'password'"
+                label="Password"
+                required
+            ></v-text-field>
+
+            <div style="text-align: right">
+              <router-link to="lost-password">Lost password</router-link>
             </div>
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('password')">
-                <label for="password">Password</label>
-                <md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password"
-                          :disabled="sending"/>
-                <span class="md-error" v-if="!$v.form.password.required">The password is required</span>
-              </md-field>
-            </div>
-          </div>
-          <div style="text-align: right">
-            <router-link to="lost-password">Lost password</router-link>
-          </div>
-        </md-card-content>
-        <md-card-actions>
-          <md-button type="submit" class="md-primary" :disabled="sending">Login</md-button>
-        </md-card-actions>
-      </md-card>
-    </form>
-  </div>
+
+            <v-btn
+                :disabled="!valid || sending"
+                color="success"
+                class="mr-4"
+                @click="auth"
+            >
+              Login
+            </v-btn>
+
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import Vue from 'vue'
-import {MdCardHeader, MdField, MdCardContent, MdInput, MdButton, MdCardActions} from 'vue-material/dist/components'
-import {validationMixin} from 'vuelidate'
-import 'vue-material/dist/vue-material.min.css'
-import 'vue-material/dist/theme/default.css'
 
-
-Vue.use(MdCardHeader)
-Vue.use(MdField)
-Vue.use(MdCardContent)
-Vue.use(MdButton)
-Vue.use(MdInput)
-Vue.use(MdCardActions)
-
-import {
-  required,
-  // email,
-  // minLength,
-  // maxLength
-} from 'vuelidate/lib/validators'
 
 export default {
   name: "Login",
-  mixins: [validationMixin],
   data: () => ({
     sending: false,
+    valid: true,
+    username: '',
+    showPass: false,
+    usernameRules: [
+      v => !!v || 'Username is required',
+      v => (v && v.length >= 3) || 'Username should have at least 3 characters',
+    ],
+    password: '',
+    passwordRules: [
+        v => !!v || 'Password is required',
+    ],
     msg: {
       content: null,
       status: null
     },
-    form: {
-      username: null,
-      password: null
-    }
   }),
-  validations: {
-    form: {
-      username: {
-        required,
-        minLength: 3
-      },
-      password: {
-        required
-      }
-    }
-  },
   methods: {
-    getValidationClass(fieldName) {
-      const field = this.$v.form[fieldName]
-
-      if (field) {
-        return {
-          'md-invalid': field.$invalid && field.$dirty
-        }
-      }
-    },
     auth() {
-      this.$v.$touch()
-      if (this.$v.$invalid) {
-        return
-      }
       this.sending = true
-      this.axios.post('/api/v1/login/', {
-        username: this.form.username,
-        password: this.form.password
+      this.$refs.form.validate()
+      this.axios.post('/api/v1/users/login/', {
+        username: this.username,
+        password: this.password
       }).then((response) => {
         localStorage.setItem('jwt', JSON.stringify(response.data))
         this.$store.commit('setAuthenticate', true)
@@ -117,11 +112,15 @@ export default {
       })
     }
   },
+  beforeMount() {
+
+  },
   mounted() {
+    this.$store.commit('setTitle', "Login")
     const token = localStorage.getItem('jwt')
     if (token) {
       const tokenParsed = JSON.parse(token)
-      this.axios.post('/api/v1/logout/', {
+      this.axios.post('/api/v1/users/logout/', {
         refresh: tokenParsed.refresh
       }, {
         headers: {
@@ -131,11 +130,6 @@ export default {
         this.msg = {
           content: "Securely logged out",
           status: "success"
-        }
-      }).catch(() => {
-        this.msg = {
-          content: "Something went wrong.",
-          status: "error"
         }
       }).finally(() => {
         this.$store.commit('setAuthenticate', false)

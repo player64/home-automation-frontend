@@ -6,15 +6,13 @@ import {store} from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.min.css'
-import 'vue-material/dist/theme/default.css'
+
+import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VueAxios, axios)
 
-Vue.use(VueMaterial)
 
 const routes = new VueRouter({
     routes: router,
@@ -40,5 +38,6 @@ routes.beforeEach((to, from, next) => {
 new Vue({
     router: routes,
     store: store,
-    render: h => h(App),
+    vuetify,
+    render: h => h(App)
 }).$mount('#app')

@@ -10,17 +10,10 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider />
 
-      <v-list
-          dense
-          nav
-      >
-        <v-list-item
-            v-for="item in menuItems"
-            :key="item.title"
-            :to="item.link"
-        >
+      <v-list dense nav>
+        <v-list-item v-for="item in menuItems" :key="item.title" :to="item.link">
           <v-list-item-content>
             <v-list-item-title v-html="item.title" />
           </v-list-item-content>
@@ -29,25 +22,21 @@
     </v-navigation-drawer>
 
     <v-app-bar app :clipped-left="clipped">
-
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="isAuth" />
       <v-toolbar-title v-html="title" />
-
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
-    <v-main>
-
+    <v-main :clipped-left="clipped">
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-
         <!-- If using vue-router -->
         <router-view></router-view>
       </v-container>
     </v-main>
 
-    <v-footer app v-if="isAuth">
-      <!-- -->
+    <v-footer app v-if="isAuth"  :clipped-left="clipped">
+      Home automation &copy; {{year}}
     </v-footer>
   </v-app>
 </template>
@@ -86,6 +75,10 @@ export default {
     },
     isAuth() {
       return this.$store.state.isAuthenticated
+    },
+    year() {
+      const d = new Date();
+      return d.getFullYear()
     }
   }
 };

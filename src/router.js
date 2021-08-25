@@ -1,13 +1,37 @@
-import Dashboard from "@/components/Dashboard"
-import Login from "@/components/Login";
-import LostPassword from "@/components/login/LostPassword";
-import ResetPassword from "@/components/login/ResetPassword";
+import Dashboard from "@/views/Dashboard"
+import Login from "@/views/login/Login";
+import LostPassword from "@/views/login/LostPassword";
+import ResetPassword from "@/views/login/ResetPassword";
+import VueRouter from "vue-router";
+import {store} from "@/store";
 
-export const router = [
+export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
     {path: '/login', component: Login, name: 'Login'},
     {path: '/lost-password', component: LostPassword, name: 'LostPassword'},
     {path: '/lost-password/:token', component: ResetPassword, name: 'ResetPassword'},
 ]
+
+
+const router = new VueRouter({
+    routes: routes,
+    scrollBehavior() {
+        return {x: 0, y: 0}
+    }
+})
+
+router.beforeEach((to, from, next) => {
+    const componentsWhiteListNoAuth = [
+        'Login',
+        'LostPassword',
+        'ResetPassword'
+    ]
+
+    if(!componentsWhiteListNoAuth.includes(to.name) && !store.getters.isAuth) {
+        next({name: 'Login'})
+    } else {
+        next()
+    }
+})
 
 export default router

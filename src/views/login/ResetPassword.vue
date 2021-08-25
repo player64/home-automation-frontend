@@ -1,76 +1,36 @@
 <template>
   <v-container>
     <v-row no-gutters justify="center">
-      <v-col
-          cols="12"
-          sm="6"
-          xl="4"
-      >
-        <v-card
-            class="pa-2"
-            outlined
-            tile
-            v-if="sent"
-        >
-          <v-alert
-              dense
-              outlined
-              prominent
-              text
-              type="success"
-          >
+      <v-col cols="12" sm="6" xl="4">
+        <v-card v-if="sent" class="pa-2" outlined tile>
+          <v-alert dense outlined prominent text type="success">
             The new password have been set.
           </v-alert>
 
-          <v-btn
-              color="primary"
-              depressed
-              elevation="2"
-              to="/login"
-          >Login</v-btn>
-
+          <v-btn color="primary" depressed elevation="2" to="/login">Login</v-btn>
         </v-card>
-        <v-card
-            class="pa-2"
-            outlined
-            tile
-            v-else
-        >
-          <v-progress-linear
-              indeterminate
-              color="blue darken-2"
-              v-if="sending"
-          ></v-progress-linear>
-          <v-alert
-              v-if="msg.status"
-              dense
-              outlined
-              text
-              :type="msg.status"
-              v-html="msg.content"
-          />
-          <v-form
-              ref="form"
-              v-model="valid"
-              lazy-validation
-          >
 
+        <v-card v-else class="pa-2" outlined tile>
+          <v-progress-linear indeterminate color="blue darken-2" v-if="sending"/>
+          <v-alert v-if="msg.status" dense outlined text :type="msg.status" v-html="msg.content"/>
+
+          <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
+                :counter="8"
                 :append-icon="showPass1 ? 'mdi-eye' : 'mdi-eye-off'"
                 v-model="password"
-                :rules="[repeatPasswordRules]"
+                :rules="passwordRules"
                 :disabled="sending"
                 @click:append="showPass1 = !showPass1"
                 :type="showPass1 ? 'text' : 'password'"
                 label="Password"
                 required
             ></v-text-field>
-
-
             <v-text-field
+                :counter="8"
                 :append-icon="showPass1 ? 'mdi-eye' : 'mdi-eye-off'"
                 v-model="repeatPassword"
-                :rules="[repeatPasswordRules, passwordMath]"
+                :rules="repeatPasswordRules"
                 :disabled="sending"
                 @click:append="showPass1 = !showPass1"
                 :type="showPass1 ? 'text' : 'password'"
@@ -82,12 +42,7 @@
               <router-link to="/login">Login</router-link>
             </div>
 
-            <v-btn
-                :disabled="!valid || sending"
-                color="success"
-                class="mr-4"
-                @click="resetPassword"
-            >
+            <v-btn :disabled="!valid || sending" color="success" class="mr-4" @click="resetPassword">
               Reset password
             </v-btn>
 
@@ -99,7 +54,9 @@
 </template>
 
 <script>
-
+// import axios clean axios without interceptors
+import axios from 'axios'
+import util from '@/services/util'
 
 export default {
   name: "ResetPassword",
@@ -116,34 +73,46 @@ export default {
     password: '',
     passwordRules: [
       v => !!v || 'Password is required',
+      v => (v && v.length >= 8) || 'The password must contain at least 8 characters'
     ],
     repeatPassword: '',
-    repeatPasswordRules: [
-      v => !!v || 'This field is required',
-     // this.passwordMath: () => ('The passwords aren\'t match')
-    ],
     form: {
       password: null,
       repeat: null
     }
   }),
   computed: {
-    passwordMath() {
-      return () => (this.password === this.repeatPassword) || 'Passwords must match'
+    token() {
+      return this.$route.params.token
+    },
+    repeatPasswordRules() {
+      return [
+        (v) => !!v || 'This field is required',
+        (v) =>  (this.password === v) || 'The passwords must match',
+      ]
     },
   },
   methods: {
-
     resetPassword() {
-      this.axios.post('/api/v1/users/password-reset/confirm/', {
-        token: this.$route.params.token,
+      if (!this.$refs.form.validate()) return
+      // /users/password-reset/confirm/
+      axios.put(`${util.apiUrl}/users/password-reset/`, {
+        token: this.token,
         password: this.password
       }).then(() => {
         this.sent = true
-      }).catch(() => {
+      }).catch((error) => {
         this.msg = {
           content: "The token is not valid. Password hasn't been changed. Try again.",
           status: "error"
+        }
+        if('password' in error && typeof error === 'object') {
+          for (const property in error) {
+            this.msg.content = `${property}:`
+            if(Array.isArray(error[property])) {
+              this.msg.content += error[property].split('<br>')
+            }
+          }
         }
       }).finally(() => {
         this.sending = false
@@ -158,24 +127,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.login {
-  margin-top: 10%;
-}
 
-.alert {
-  padding: 5px 10px;
-  margin: 0.3rem 0;
-
-  &--success {
-    color: green;
-    background-color: rgba(green, 0.2);
-    border: 1px solid green;
-  }
-
-  &--error {
-    color: red;
-    background-color: rgba(red, 0.1);
-    border: 1px solid red;
-  }
-}
 </style>

@@ -33,9 +33,6 @@ export default {
       return _readingValue + reading.units
     }
   },
-  mounted() {
-    console.log(sensors.types)
-  }
 }
 </script>
 

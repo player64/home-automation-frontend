@@ -7,7 +7,10 @@
         </v-card>
       </v-col>
     </v-row>
-
+    <v-alert v-else class="ma-4" type="warning">
+      It looks that you haven't defined any workspaces you can add a new workspace <router-link to="/workspaces">here</router-link>
+      to group your devices
+    </v-alert>
   </div>
 
 </template>

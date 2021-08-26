@@ -8,7 +8,7 @@
     </v-card-text>
     <v-divider class="pa-2" />
     <sensor-readings v-if="device.type === 'sensor'" :type="device.sensor_type" :readings="device.readings" />
-    <relay-readings v-else-if="device.type === 'relay'" :readings="device.readings" />
+    <relay-readings v-else-if="device.type === 'relay'" :readings="device.readings" :id="device.pk" />
   </v-card>
 </template>
 

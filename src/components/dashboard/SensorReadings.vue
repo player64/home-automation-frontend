@@ -17,7 +17,7 @@ export default {
   name: "SensorReadings",
   props: {
     type: String,
-    readings: Object,
+    readings: Object || null,
   },
   computed: {
     readingKeys() {

@@ -75,6 +75,7 @@ export default {
     }
   },
   mounted() {
+    console.log(util.testAzure)
     this.$store.commit('setTitle', "Login")
     const tokens = localStorageJWT.load()
     if (tokens) {

@@ -59,9 +59,9 @@ export default {
       drawer: false,
       menuItems: [
         {title: 'Dashboard', link: '/'},
-        {title: 'Devices', link: '/'},
-        {title: 'Workspaces', link: '/'},
-        {title: 'Users', link: '/'},
+        {title: 'Devices', link: '/devices'},
+        {title: 'Workspaces', link: '/workspaces'},
+        {title: 'Users', link: '/users'},
         {title: 'Logout', link: '/login'},
       ]
     }

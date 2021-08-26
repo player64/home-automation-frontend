@@ -27,13 +27,14 @@ axios.interceptors.response.use((response) => {
     const originalRequest = error.config
 
     if (error.response.status === 401 && originalRequest.url.includes('/api/v1/users/token/refresh/')) {
-        router.push('/login').catch(()=>{});
+        router.push('/login').catch(()=>{})
         return
     }
 
     if (error.response.status === 401 && !originalRequest._retry) {
         const token_refresh = localStorageJWT.getItem('refresh')
         if(!token_refresh) {
+            router.push('/login').catch(()=>{})
             return
         }
         originalRequest._retry = true

@@ -1,12 +1,20 @@
 import Dashboard from "@/views/Dashboard"
-import Login from "@/views/login/Login";
-import LostPassword from "@/views/login/LostPassword";
-import ResetPassword from "@/views/login/ResetPassword";
-import VueRouter from "vue-router";
-import {store} from "@/store";
+import Login from "@/views/login/Login"
+import LostPassword from "@/views/login/LostPassword"
+import ResetPassword from "@/views/login/ResetPassword"
+import DeviceSingle from "@/views/DeviceSingle"
+import VueRouter from "vue-router"
+import Devices from "@/views/Devices"
+import Users from "@/views/Users"
+import Workspaces from "@/views/Workspaces"
+import {store} from "@/store"
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
+    {path: '/devices', component: Devices, name: 'Devices'},
+    {path: '/device/:id', component: DeviceSingle, name: 'Device Details'},
+    {path: '/users', component: Users, name: 'Users'},
+    {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
     {path: '/login', component: Login, name: 'Login'},
     {path: '/lost-password', component: LostPassword, name: 'LostPassword'},
     {path: '/lost-password/:token', component: ResetPassword, name: 'ResetPassword'},

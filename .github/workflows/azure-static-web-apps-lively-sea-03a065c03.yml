@@ -34,7 +34,6 @@ jobs:
         env:
           VUE_APP_API_URL: ${{secrets.VUE_APP_API_URL}}
           VUE_APP_CAPTCHA_KEY: ${{secrets.VUE_APP_CAPTCHA_KEY}}
-          AZURE_TEST:  ${{secrets.AZURE_TEST}}}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

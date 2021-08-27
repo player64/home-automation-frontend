@@ -7,6 +7,7 @@ import VueRouter from "vue-router"
 import Devices from "@/views/Devices"
 import Users from "@/views/Users"
 import Workspaces from "@/views/Workspaces"
+import NotFound from "@/views/NotFound";
 import {store} from "@/store"
 
 export const routes = [
@@ -16,8 +17,9 @@ export const routes = [
     {path: '/users', component: Users, name: 'Users'},
     {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
     {path: '/login', component: Login, name: 'Login'},
-    {path: '/lost-password', component: LostPassword, name: 'LostPassword'},
-    {path: '/lost-password/:token', component: ResetPassword, name: 'ResetPassword'},
+    {path: '/lost-password', component: LostPassword, name: 'Lost Password'},
+    {path: '/lost-password/:token', component: ResetPassword, name: 'Reset Password'},
+    {path: '*', component: NotFound, name: 'Not Found'}
 ]
 
 

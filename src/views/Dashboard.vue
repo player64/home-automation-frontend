@@ -5,12 +5,12 @@
         <workspace-list :items="workspaces" @fetchWorkspaceDevices="getWorkspaceDevices" />
         <loader v-if="loadingDevices" />
         <div v-else>
-          <v-divider class="ma-5" />
+          <v-divider class="mt-5 mb-5" />
           <device-list v-if="sensors.length" :devices="sensors" />
-          <v-alert v-else class="ma-4" type="warning" v-html="noDevicesWarning('sensors')" />
-          <v-divider class="ma-5" />
+          <v-alert v-else class="mt-4" type="warning" v-html="noDevicesWarning('sensors')" />
+          <v-divider class="mt-5 mb-5" />
           <device-list v-if="relays.length" :devices="relays" />
-          <v-alert v-else class="ma-4" type="warning" v-html="noDevicesWarning('relays')" />
+          <v-alert v-else class="mt-4 mb-4" type="warning" v-html="noDevicesWarning('relays')" />
         </div>
       </div>
   </div>

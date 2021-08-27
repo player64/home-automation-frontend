@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import sensors from '@/services/sensors'
+import factories from '@/services/factories'
 
 export default {
   name: "SensorReadings",
@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     readingKeys() {
-      return sensors.getKeys(this.type)
+      return factories.getSensorReadings(this.type)
     }
   },
   methods: {

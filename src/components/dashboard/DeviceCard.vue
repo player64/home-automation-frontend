@@ -1,10 +1,11 @@
 <template>
   <v-card class="pa-2" outlined>
     <v-card-title align="center">
-      <router-link :to="`/device/${device.pk}`" v-html="device.name"></router-link>
+      <v-btn :to="`/device/${device.pk}`" depressed x-large text color="primary" v-html="device.name" />
+
     </v-card-title>
     <v-card-text v-if="device.updated_at">
-      Last updated at: {{convertDate(device.updated_at)}}
+      Last updated at: {{util.convertDate(device.updated_at)}}
     </v-card-text>
     <v-divider class="pa-2" />
     <sensor-readings v-if="device.type === 'sensor'" :type="device.sensor_type" :readings="device.readings" />
@@ -23,7 +24,8 @@ export default {
   },
   data: () => {
     return {
-      interval: null
+      interval: null,
+      util: util
     }
   },
   components: {
@@ -31,17 +33,6 @@ export default {
     RelayReadings
   },
   methods: {
-    convertDate(date) {
-      return new Date(date).toLocaleDateString(
-          'en-gb',
-          {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            timeZone: 'Europe/Dublin'
-          }
-      );
-    },
     getReadings() {
       this.axios.get(`${util.apiUrl}/devices/readings/${this.device.pk}/`)
           .then((response) => {

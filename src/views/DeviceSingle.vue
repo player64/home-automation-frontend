@@ -1,10 +1,89 @@
 <template>
-<div></div>
+  <div>
+    <loader v-if="loading" text="Loading device ..."/>
+    <div v-else-if="device">
+      <v-tabs v-model="tab" align-with-title>
+        <v-tabs-slider/>
+        <v-tab v-for="(item, key) in tabs" :key="key" v-html="item.name"/>
+      </v-tabs>
+
+      <v-tabs-items v-model="tab">
+        <v-tab-item v-for="(item, key) in tabs" :key="key">
+          <v-card flat class="mt-5">
+            <component :is="item.component" :data="device"></component>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+
+    </div>
+  </div>
 </template>
 
 <script>
+// <v-card-text v-text="item.name"></v-card-text>
+import util from "@/services/util";
+import Loader from '../components/ui/Loader'
+
 export default {
-  name: "DeviceSingle"
+  name: "DeviceSingle",
+  props: {
+    edit: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  components: {
+    Loader,
+    DeviceInfo: () => import('../components/devices/DeviceInfo'),
+    DeviceLogs: () => import('../components/devices/DeviceLogs'),
+    DeviceEvents: () => import('../components/devices/DeviceEvents'),
+    DeviceEdit: () => import('../components/devices/DeviceEdit'),
+  },
+  data() {
+    return {
+      device: null,
+      tabs: [
+        {name: 'Info', component: 'DeviceInfo',},
+        {name: 'Logs', component: 'DeviceLogs',},
+        {name: 'Events', component: 'DeviceEvents',},
+        {name: 'Edit', component: 'DeviceEdit',},
+      ],
+      loading: true,
+      error: true,
+      tab: (this.edit) ? 3 : 0, // open third tab (edit) on edit
+    }
+  },
+  computed: {
+    device_id() {
+      return this.$route.params.id
+    }
+  },
+  methods: {
+    getDeviceDetails() {
+      this.axios.get(`${util.apiUrl}/devices/single/${this.device_id}/`)
+          .then((response) => {
+            this.$store.commit('setTitle', `Device - ${response.data.name}`)
+            this.device = response.data
+          }).catch((e) => {
+        if (e.response.status === 404) {
+          this.$router.push({path: 'not-found'})
+          return
+        }
+        this.error = e.response.data
+
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  },
+  mounted() {
+    this.$store.commit('setTitle', "Device")
+    if (isNaN(this.device_id)) {
+      this.$router.push({path: '/not-found'})
+      return
+    }
+    this.getDeviceDetails()
+  }
 }
 </script>
 

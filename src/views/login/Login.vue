@@ -15,7 +15,7 @@
                           label="Password" required/>
 
             <div style="text-align: right">
-              <router-link to="lost-password">Lost password</router-link>
+              <router-link to="/lost-password">Lost password</router-link>
             </div>
 
             <v-btn :disabled="!valid || sending" color="success" class="mr-4" @click="auth">Login</v-btn>

@@ -23,9 +23,6 @@
 </template>
 
 <script>
-/**
- *
- */
 import factories from '@/services/factories'
 import util from "@/services/util"
 import ConfirmationDeletion from '@/components/ui/ConfirmationDeletion'
@@ -46,12 +43,12 @@ export default {
     }
   },
   computed: {
-    infos: function () {
+    infos() {
       const base = [
         {name: 'Device name', data: this.data.name},
-        {name: 'Workspace', data: (this.data.workspace) ? this.data.workspace.name : 'Not attached to any workspace'},
+        {name: 'Workspace', data: this.getWorkspaceNameById()},
         {name: 'Host device ID', data: this.data.device_host_id},
-        {name: 'Device type', data: factories.getTypes('devices', 'object', this.data.type)},
+        {name: 'Device type', data: factories.getDeviceTypeReadableFormat(this.data.type)},
         {name: 'Last login', data: util.convertDate(this.data.updated_at)}
       ]
 
@@ -70,6 +67,11 @@ export default {
     }
   },
   methods: {
+    getWorkspaceNameById() {
+      if (!this.data.workspace) return 'Not attached to any workspace'
+      const filtered = this.data.workspaces.filter((item) => item.pk === this.data.workspace)
+      return filtered[0].name
+    },
     deleteDevice() {
       this.deleting = true
       this.axios.delete(`${util.apiUrl}/devices/${this.data.pk}/`)

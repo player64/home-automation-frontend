@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     readingKeys() {
-      return factories.getSensorReadings(this.type)
+      return factories.getSensorReadingsByType(this.type)
     }
   },
   methods: {

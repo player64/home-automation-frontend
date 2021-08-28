@@ -1,57 +1,37 @@
-const sensorTypes = {
-    am2301: [
-        {
-            key: 'temperature',
-            units: '°C'
-        },
-        {
-            key: 'humidity',
-            units: '%'
-        }
-    ],
-}
-
-const getType = (type) => {
-    if (type in sensorTypes) {
-        return sensorTypes[type]
-    }
-    return false
-}
-
-const firmwares = {
-    'tasmota': 'Tasmota'
-}
-
-const deviceTypes = {
-    'relay': 'Relay switch',
-    'sensor': 'Sensor'
-}
+import {sensorTypes} from './types/sensors'
+import {deviceTypes} from "./types/devicesType"
+import {firmwares} from './types/firmwares'
 
 function objectToArrayOfObjects(obj) {
-    return Object.keys(obj).map((key) => [{key: key, name: obj[key]}])
+    return Object.keys(obj).map((key) => {
+        return {[key]: obj[key]}
+    })
 }
 
 const factories = {
-    getSensorReadings: (type) => getType(type),
+    getSensorReadingsByType: (type) => {
+        if (type in sensorTypes) {
+            return sensorTypes[type]
+        }
+        throw new Error(`Readings not defined for ${type} in the sensorTypes`)
+    },
+
     sensorTypes: Object.keys(sensorTypes),
-    getTypes: (type = '', format = 'array', key = false) => {
-        const types = {
-            'firmwares': firmwares,
-            'devices': deviceTypes,
-        }
 
-        if(!(type in types)) {
-            throw new Error(`There is no ${type} defined.`)
-        }
+    getFirmwareReadableFormat: (type) => {
+        return (type in firmwares) ? firmwares[type] : 'None'
+    },
 
-        if (format === 'array') {
-            return objectToArrayOfObjects(types[type])
-        }
+    getFirmwareList: () => {
+        return objectToArrayOfObjects(firmwares)
+    },
 
-        if(key) {
-            return ( key in types[type] ) ? types[type][key] : 'None'
-        }
-        return types[type]
+    getDeviceTypeReadableFormat: (type) => {
+        return (type in deviceTypes) ? deviceTypes[type] : 'None'
+    },
+
+    getDeviceTypeList: () => {
+        return objectToArrayOfObjects(deviceTypes)
     },
 }
 

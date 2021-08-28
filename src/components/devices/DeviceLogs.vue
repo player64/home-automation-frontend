@@ -34,7 +34,7 @@
 
         <loader v-if="loading" text="Getting logs"/>
 
-        <v-alert v-if="!rawLogs.length && !loading"
+        <v-alert v-if="!logs.length && !loading"
                  dense
                  type="warning"
         >
@@ -43,10 +43,10 @@
 
 
         <v-data-table v-else-if="logs.length"
-            :headers="headers"
-            :items="logs"
-            hide-default-footer
-            class="elevation-1"
+                      :headers="headers"
+                      :items="logs"
+                      hide-default-footer
+                      class="elevation-1"
         ></v-data-table>
 
 
@@ -71,14 +71,8 @@ export default {
       date: null,
       menu: false,
       loading: false,
-      rawLogs: [],
       logs: [],
-      headers: [
-        {
-          text: 'Time',
-          value: 'time'
-        }
-      ]
+      headers: []
     }
   },
   props: {
@@ -88,7 +82,7 @@ export default {
     toIsoToday() {
       const isoDate = new Date(this.today)
       return isoDate.toISOString()
-    }
+    },
   },
   methods: {
     getLogs() {
@@ -97,57 +91,61 @@ export default {
       this.logs = []
       this.axios.get(`${util.apiUrl}/devices/log/${this.data.pk}/?date=${this.date}`)
           .then((response) => {
-            this.rawLogs = response.data
-            this.logs = this.convertLogsToTableFormat()
-            console.log(this.logs)
+            this.logs = this.convertLogsToTableFormat(response.data)
           }).finally(() => {
         this.loading = false
       })
     },
-    convertLogsToTableFormat() {
-      if(!this.rawLogs.length) return
-      let keys
-
-      // reset headers
-      this.headers = [
-        {
-          text: 'Time',
-          value: 'time'
-        }
-      ]
-
-      if (this.data.type === 'sensor') {
-        const factory = factories.getSensorReadings(this.data.sensor_type)
-
-        keys = factory.map((item) => {
-          // update headers for sensor
-          this.headers.push({
-            text: util.capitalizeFirstLetter(item.key),
-            value: item.key
-          })
-
-          return {
-              key: item.key,
-              unit: item.units
-            }
-
-        })
-      } else if (this.data.type === 'relay') {
+    sensorKeys() {
+      const factory = factories.getSensorReadingsByType(this.data.sensor_type)
+      return factory.map((item) => {
         // update headers for sensor
         this.headers.push({
-          text: 'Action',
-          value: 'state'
+          text: util.capitalizeFirstLetter(item.key),
+          value: item.key
         })
 
+        return {
+          key: item.key,
+          unit: item.units
+        }
+      })
+    },
+    relayKeys() {
+      // update headers for relay
+      this.headers.push({
+        text: 'Action',
+        value: 'state'
+      })
 
-        keys = [{
-          key: 'state',
-          unit: null
-        }]
+      return [{
+        key: 'state',
+        unit: null
+      }]
+    },
+    makeKeys(type) {
+      const types = {
+        relay: this.relayKeys,
+        sensor: this.sensorKeys
       }
 
+      if (type in types) {
+        // add time to headers
+        this.headers = [{
+          text: 'Time',
+          value: 'time'
+        }]
+
+        return types[type]()
+      }
+      throw new Error(`This type ${type} isn't implemented. The keys cannot be converted.`)
+    },
+    convertLogsToTableFormat(logs) {
+      if (!logs.length) return []
+      const keys = this.makeKeys(this.data.type)
+
       // convert logs
-      return this.rawLogs.map((item) => {
+      return logs.map((item) => {
         const out = {
           time: util.getTimeFromDate(item.time),
         }
@@ -159,10 +157,7 @@ export default {
     }
   },
   mounted() {
-    // this.logs = [{time: '2021-05-24T03:44:46+01:00', readings: {state: 'OFF'}}]
-    // this.rawLogs = [{time: '2021-05-24T03:44:46+01:00', readings: {humidity: 99.9,temperature: 24.6}}]
-    this.rawLogs = this.data.logs
-    this.logs = this.convertLogsToTableFormat()
+    this.logs = this.convertLogsToTableFormat(this.data.logs)
     this.date = this.today
   }
 }

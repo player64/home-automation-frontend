@@ -77,9 +77,6 @@ export default {
         {
           text: 'Time',
           value: 'time'
-        },
-        {
-
         }
       ]
     }
@@ -151,12 +148,11 @@ export default {
 
       // convert logs
       return this.rawLogs.map((item) => {
-        let out = {
+        const out = {
           time: util.getTimeFromDate(item.time),
         }
-
         keys.map((k) => {
-          out[k.key] = item.readings[k.key]
+          out[k.key] = item.readings[k.key] + ((k.unit) ? k.unit : '')
         })
         return out
       })

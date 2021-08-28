@@ -42,12 +42,6 @@ export default {
   data() {
     return {
       device: null,
-      tabs: [
-        {name: 'Info', component: 'DeviceInfo',},
-        {name: 'Logs', component: 'DeviceLogs',},
-        {name: 'Events', component: 'DeviceEvents',},
-        {name: 'Edit', component: 'DeviceEdit',},
-      ],
       loading: true,
       error: true,
       tab: (this.edit) ? 3 : 0, // open third tab (edit) on edit
@@ -56,6 +50,18 @@ export default {
   computed: {
     device_id() {
       return this.$route.params.id
+    },
+    tabs() {
+      const out = [
+        {name: 'Info', component: 'DeviceInfo',},
+        {name: 'Logs', component: 'DeviceLogs',},
+        {name: 'Edit', component: 'DeviceEdit',},
+      ]
+
+      if(this.device.type === 'relay') {
+        out.push({name: 'Events', component: 'DeviceEvents',})
+      }
+      return out
     }
   },
   methods: {

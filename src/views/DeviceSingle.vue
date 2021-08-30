@@ -26,12 +26,6 @@ import Loader from '../components/ui/Loader'
 
 export default {
   name: "DeviceSingle",
-  props: {
-    edit: {
-      type: Boolean,
-      default: false,
-    }
-  },
   components: {
     Loader,
     DeviceInfo: () => import('../components/devices/DeviceInfo'),
@@ -44,13 +38,14 @@ export default {
       device: null,
       loading: true,
       error: true,
-      tab: (this.edit) ? 3 : 0, // open third tab (edit) on edit
+      tab: 0, // open third tab (edit) on edit
     }
   },
   computed: {
     device_id() {
       return this.$route.params.id
     },
+
     tabs() {
       const out = [
         {name: 'Info', component: 'DeviceInfo',},
@@ -58,7 +53,7 @@ export default {
         {name: 'Edit', component: 'DeviceEdit',},
       ]
 
-      if(this.device.type === 'relay') {
+      if (this.device.type === 'relay') {
         out.push({name: 'Events', component: 'DeviceEvents',})
       }
       return out
@@ -75,7 +70,7 @@ export default {
           this.$router.push({path: 'not-found'})
           return
         }
-        this.error = e.response.data
+        this.error = util.convertDjangoErrorToString(e.response.data)
 
       }).finally(() => {
         this.loading = false
@@ -83,11 +78,31 @@ export default {
     }
   },
   mounted() {
+    // open tab based on route param
+    switch (this.$route.params.tab) {
+      case 'info':
+        this.tab = 0
+        break
+      case 'logs':
+        this.tab = 1
+        break
+      case 'edit':
+        this.tab = 2
+        break
+      case 'event':
+        this.tab = 3
+        break
+      default:
+        this.tab = 0
+    }
+
+
     this.$store.commit('setTitle', "Device")
     if (isNaN(this.device_id)) {
       this.$router.push({path: '/not-found'})
       return
     }
+
     this.getDeviceDetails()
   }
 }

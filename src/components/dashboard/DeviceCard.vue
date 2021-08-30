@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-2" outlined>
     <v-card-title align="center">
-      <v-btn :to="`/device/${device.pk}`" depressed x-large text color="primary" v-html="device.name" />
+      <v-btn :to="`/device/${device.pk}/info`" depressed x-large text color="primary" v-html="device.name" />
 
     </v-card-title>
     <v-card-text v-if="device.updated_at">

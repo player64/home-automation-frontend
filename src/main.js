@@ -8,6 +8,7 @@ import VueAxios from 'vue-axios'
 
 
 import vuetify from './plugins/vuetify'
+import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)

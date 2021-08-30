@@ -9,11 +9,14 @@ import Users from "@/views/Users"
 import Workspaces from "@/views/Workspaces"
 import NotFound from "@/views/NotFound";
 import {store} from "@/store"
+import DeviceNew from "@/views/DeviceNew";
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
     {path: '/devices', component: Devices, name: 'Devices'},
-    {path: '/device/:id', component: DeviceSingle, name: 'Device Details'},
+    //{path: '/device/:id', component: DeviceSingle, name: 'Device Details'},
+    {path: '/device/:id/:tab', component: DeviceSingle, name: 'DeviceDetails'},
+    {path: '/device/add', component: DeviceNew, name: 'DeviceNew'},
     {path: '/users', component: Users, name: 'Users'},
     {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
     {path: '/login', component: Login, name: 'Login'},

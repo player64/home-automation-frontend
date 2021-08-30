@@ -14,4 +14,24 @@ describe('Testing utilities methods', () => {
     it('capitalizeFirstLetter', () => {
         expect(util.capitalizeFirstLetter('test test test')).toBe('Test test test')
     })
+
+    it('convertDjangoObjectToSelectField', () => {
+        expect(util.convertDjangoObjectToSelectField({pk: 1, name: 'Test'}))
+            .toStrictEqual({value: 1, text: 'Test'})
+    })
+
+    it('convertDjangoArrayOfObjectsToSelectField', () => {
+        expect(util.convertDjangoArrayOfObjectsToSelectField([{pk: 1, name: 'Test'}]))
+            .toStrictEqual([{value: 1, text: 'Test'},])
+    })
+
+    it('convertDjangoErrorToString', () => {
+        const error = {name: ['This field is required.']}
+        expect(util.convertDjangoErrorToString(error))
+            .toBe('name: This field is required.<br>')
+
+        const error2 = {error: 'Something went wrong'}
+        expect(util.convertDjangoErrorToString(error2))
+            .toBe('Something went wrong')
+    })
 })

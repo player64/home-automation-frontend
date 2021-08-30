@@ -1,6 +1,8 @@
-import {shallowMount} from '@vue/test-utils';
+import axios from '@/axios'
+import {shallowMount} from '@vue/test-utils'
 import DeviceLogs from '@/components/devices/DeviceLogs'
 
+jest.mock('axios')
 describe('Testing DeviceLogs component methods', () => {
 
     it('Sensor keys correct format', () => {
@@ -46,7 +48,7 @@ describe('Testing DeviceLogs component methods', () => {
         jest.disableAutomock()
         const relay = {
             type: "relay",
-            logs:  [{
+            logs: [{
                 time: '2021-08-25T01:00:00+01:00',
                 readings: {
                     state: 'OFF',
@@ -72,7 +74,7 @@ describe('Testing DeviceLogs component methods', () => {
         const sensor = {
             type: "sensor",
             sensor_type: "am2301",
-            logs:  [{
+            logs: [{
                 time: '2021-08-25T01:00:00+01:00',
                 readings: {
                     humidity: 75.5,
@@ -104,9 +106,40 @@ describe('Testing DeviceLogs component methods', () => {
             {pk: 5, name: 'Test 5'}
         ]
 
-        const res = workspaces.filter((item)=>item.pk === 4)
+        const res = workspaces.filter((item) => item.pk === 4)
 
         expect(res[0].name).toBe('Test 4')
+
+        const wrapper = shallowMount(DeviceLogs, {
+                propsData: {
+                    data: {
+                        pk: 1,
+                        logs: []
+                    }
+                },
+                mocks: {
+                    axios: axios
+                }
+            }
+        )
+        const logs = [{
+            time: '2021-08-25T01:00:00+01:00',
+            readings: {
+                humidity: 75.5,
+                temperature: 25.1
+            }
+        }]
+
+
+        axios.get.mockImplementationOnce(() => Promise.resolve(logs))
+        wrapper.vm.getLogs()
+        expect(wrapper.vm.logs).toStrictEqual(
+            [{
+                time: '01:00:00',
+                temperature: '25.1°C',
+                humidity: '75.5%',
+            }]
+        )
     })
 
 })

@@ -4,7 +4,11 @@ import {firmwares} from './types/firmwares'
 
 function objectToArrayOfObjects(obj) {
     return Object.keys(obj).map((key) => {
-        return {[key]: obj[key]}
+        //return {[key]: obj[key]}
+        return {
+            value: key,
+            text: obj[key]
+        }
     })
 }
 

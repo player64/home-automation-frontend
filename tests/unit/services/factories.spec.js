@@ -23,7 +23,9 @@ describe('Testing types methods', () => {
     })
 
     it('getFirmwareList', () => {
-        expect(factories.getFirmwareList()).toStrictEqual([{'tasmota': 'Tasmota'}])
+        expect(factories.getFirmwareList()).toStrictEqual([
+            {value: 'tasmota', text: 'Tasmota'}
+        ])
     })
 
     it('getDeviceTypeReadableFormat', () => {
@@ -34,8 +36,8 @@ describe('Testing types methods', () => {
 
     it('getDeviceTypeList', () => {
         const expected = [
-            {relay: 'Relay switch'},
-            {sensor: 'Sensor'},
+            {value: 'relay', text: 'Relay switch'},
+            {value: 'sensor', text: 'Sensor'},
         ]
         expect(factories.getDeviceTypeList()).toStrictEqual(expected)
     })

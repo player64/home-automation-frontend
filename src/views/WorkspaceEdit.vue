@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       workspace: null,
-      loading: false,
+      loading: true,
     }
   },
   methods: {

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <v-alert v-if="msg.status" dense outlined text :type="msg.status">
-      {{msg.content}}
-    </v-alert>
+    <message/>
     <v-form v-if="!sent" ref="form" v-model="valid" lazy-validation>
       <v-progress-linear indeterminate color="blue darken-2" v-if="sending"/>
       <v-text-field v-model="form.name" :rules="nameRules" :disabled="sending" label="Device name" required/>
@@ -32,7 +30,7 @@
                    @response="pushCreatedWorkspace"
                    @close="openDialog=false"/>
 
-      <v-spacer />
+      <v-spacer/>
       <v-btn :disabled="!valid || sending" color="success" class="mr-4" @click="deviceForm" large
              v-html="((device) ? 'Edit' : 'Add') + ' device'"/>
     </v-form>
@@ -40,10 +38,11 @@
 </template>
 
 <script>
-import factories from "@/services/factories";
-import axios from "axios";
-import util from "@/services/util";
-import DialogForm from "@/components/ui/DialogForm";
+import factories from "@/services/factories"
+import axios from "axios"
+import util from "@/services/util"
+import DialogForm from "@/components/ui/DialogForm"
+import Message from "@/components/ui/Message"
 
 export default {
   name: "DeviceForm",
@@ -51,7 +50,8 @@ export default {
     device: Object || null
   },
   components: {
-    DialogForm
+    DialogForm,
+    Message
   },
   data() {
     return {
@@ -88,11 +88,6 @@ export default {
         v => !!v || 'Sensor type is required'
       ],
 
-      msg: {
-        content: null,
-        status: null
-      },
-
       workspaces: [],
       firmwares: [],
       sensorTypes: [],
@@ -117,7 +112,7 @@ export default {
       let method = 'post'
       let statusString = 'created'
 
-      if(this.device) {
+      if (this.device) {
         url += `/${this.device.pk}/`
         method = 'put'
         statusString = 'updated'
@@ -130,22 +125,25 @@ export default {
         url: url,
         data: this.form
       }).then(() => {
-        this.$emit('created')
-        if(!this.device) {
-          this.sent = true
-        }
-        this.msg = {
+        this.$store.commit('setMessage', {
           status: 'success',
           content: `The device has been ${statusString}`
+        })
+        // if new device redirect to devices route
+        if (!this.device) {
+          this.sent = true
+          this.$router.push({path: '/devices'})
         }
-      }).catch((error) => {
-        this.msg = {
-          status: 'error',
-          content: util.convertDjangoErrorToString(error.response.data)
-        }
-      }).finally(() => {
-        this.sending = false
       })
+          .catch((error) => {
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(error.response.data)
+            })
+          })
+          .finally(() => {
+            this.sending = false
+          })
     },
     pushCreatedWorkspace(data) {
       this.form.workspace = data.pk

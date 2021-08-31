@@ -7,7 +7,11 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
     state: {
         isAuthenticated: !!(localStorage.getItem('jwt')),
-        title: false
+        title: 'Home automation',
+        message: {
+            content: null,
+            status: null
+        }
     },
     mutations: {
         setAuthenticate(state, payload) {
@@ -15,6 +19,15 @@ export const store = new Vuex.Store({
         },
         setTitle(state, payload) {
             state.title = payload
+        },
+        setMessage(state, payload) {
+            state.message = payload
+        },
+        clearMessage(state) {
+            state.message = {
+                content: null,
+                status: null
+            }
         }
     },
     getters: {
@@ -23,6 +36,9 @@ export const store = new Vuex.Store({
         },
         title(state) {
             return state.title
+        },
+        message(state) {
+            return state.message
         }
     }
 })

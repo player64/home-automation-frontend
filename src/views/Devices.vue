@@ -1,40 +1,72 @@
 <template>
-<div class="mt-5">
-  <v-btn class="mb-5" x-large color="success" to="/device/add">Add new device +</v-btn>
-
-  <items-list :items="devices" class="mt-10" />
-</div>
+  <div class="mt-5">
+    <v-btn class="mb-5" x-large color="success" to="/device/add">Add new device +</v-btn>
+    <message :redirected="true"/>
+    <loader v-if="loading" text="Loading device ..."/>
+    <items-list v-else-if="devices.length" :items="devices" :deleting="deleting" :callback="deleted"
+                @deleteConfirmed="deleteDevice" @closeWindow="deleted=false" class="mt-10"/>
+    <v-alert v-else type="warning">
+      No devices found.
+    </v-alert>
+  </div>
 </template>
 
 <script>
-/**
- *   <dialog-form form-type="DeviceForm" title="Create new device"
- :dialog="openDialog"
- @close="openDialog=false"/>
- */
-// import DialogForm from "@/components/ui/DialogForm";
-import ItemsList from "@/components/ui/ItemsList";
-import axios from "axios";
-import util from "@/services/util";
+import ItemsList from "@/components/ui/ItemsList"
+import util from "@/services/util"
+import Message from "@/components/ui/Message"
+import Loader from "@/components/ui/Loader"
 
 export default {
   name: "Devices",
   components: {
     // DialogForm,
-    ItemsList
+    ItemsList,
+    Loader,
+    Message
   },
   data() {
     return {
-      openDialog: false,
+      loading: true,
+      deleting: false,
+      deleted: false,
       devices: []
+    }
+  },
+  methods: {
+    deleteDevice(id) {
+      this.deleting = true
+
+      this.axios.delete(`${util.apiUrl}/devices/${id}`)
+          .then(() => {
+            this.devices = this.devices.filter((value) => {
+              return value.pk !== id
+            })
+            this.deleted = true
+            this.$store.commit('setMessage', {
+              status: 'success',
+              content: 'The device has been deleted'
+            })
+          })
+          .catch((e) => {
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(e.response.data)
+            })
+          })
+          .finally(() => {
+            this.deleting = false
+          })
     }
   },
   mounted() {
     this.$store.commit('setTitle', "Devices")
-    axios.get(`${util.apiUrl}/devices/details/`)
+    this.axios.get(`${util.apiUrl}/devices/details/`)
         .then((response) => {
           this.devices = response.data
-        })
+        }).finally(() => {
+      this.loading = false
+    })
   }
 }
 </script>

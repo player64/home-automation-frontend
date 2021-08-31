@@ -52,17 +52,20 @@ export default {
         {name: 'Last login', data: util.convertDate(this.data.updated_at)}
       ]
 
-      if (this.data.type === 'relay') {
-        base.push({
-          name: 'GPIO pin', data: this.data.gpio
-        })
+      switch (this.data.type) {
+        case 'relay':
+          base.push({
+            name: 'GPIO pin', data: this.data.gpio
+          })
+          break
+        case 'sensor':
+          base.push({
+            name: 'Sensor type', data: this.data.sensor_type
+          })
+          break
+        default:
       }
 
-      if (this.data.type === 'sensor') {
-        base.push({
-          name: 'Sensor type', data: this.data.sensor_type
-        })
-      }
       return base
     }
   },
@@ -76,19 +79,24 @@ export default {
       this.deleting = true
       this.axios.delete(`${util.apiUrl}/devices/${this.data.pk}/`)
           .then(() => {
-            this.callBackConfirmation = {
+            this.$store.commit('setMessage', {
+              status: 'success',
+              content: `The device ${this.data.name} has been deleted`
+            })
+            this.$router.push({path: '/devices'})
+            /*this.callBackConfirmation = {
               text: 'The device has been deleted',
               status: 'success',
               backLink: {
                 text: 'Go back to devices',
                 path: '/devices'
               }
-            }
+            }*/
           }).catch(() => {
-        this.callBackConfirmation = {
+        this.$store.commit('setMessage',  {
           text: 'An error has occurred. The device hasn\'t been deleted.',
           status: 'error',
-        }
+        })
       }).finally(() => {
         this.deleting = false
       })

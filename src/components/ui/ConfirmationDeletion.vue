@@ -2,21 +2,8 @@
   <v-bottom-sheet v-model="isOpen" persistent>
     <v-sheet class="text-center" height="150px">
       <div v-if="confirmedCallback">
-        <v-alert
-            dense
-            :type="confirmedCallback.status"
-        >
-          {{confirmedCallback.text}}
-        </v-alert>
-
+        <message :redirected="true" />
         <v-btn
-            v-if="confirmedCallback.status === 'success' &&(confirmedCallback.backLink.text && confirmedCallback.backLink.path)"
-            depressed
-            :to="confirmedCallback.backLink.path"
-            v-html="confirmedCallback.backLink.text"
-            color="primary" />
-        <v-btn
-            v-else
             class="ma-1"
             color="primary"
             text
@@ -53,7 +40,22 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script>/**
+ <v-alert
+ dense
+ :type="confirmedCallback.status"
+ >
+ {{confirmedCallback.text}}
+ </v-alert>
+ *         <v-btn
+ v-if="confirmedCallback.status === 'success' && (confirmedCallback.backLink.text && confirmedCallback.backLink.path)"
+ depressed
+ :to="confirmedCallback.backLink.path"
+ v-html="confirmedCallback.backLink.text"
+ color="primary" />
+ */
+import Message from "@/components/ui/Message";
+
 export default {
   name: "ConfirmationDeletion",
   props: {
@@ -61,10 +63,14 @@ export default {
     typeText: String,
     deleting: Boolean,
     confirmedCallback: {
-      type: Object,
-      default: null
+      type: Boolean,
+      default: false
     }
   },
+
+  components: {
+    Message
+  }
 }
 </script>
 

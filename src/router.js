@@ -10,6 +10,8 @@ import Workspaces from "@/views/Workspaces"
 import NotFound from "@/views/NotFound";
 import {store} from "@/store"
 import DeviceNew from "@/views/DeviceNew";
+import WorkspaceNew from "@/views/WorkspaceNew";
+import WorkspaceEdit from "@/views/WorkspaceEdit";
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
@@ -19,6 +21,8 @@ export const routes = [
     {path: '/device/add', component: DeviceNew, name: 'DeviceNew'},
     {path: '/users', component: Users, name: 'Users'},
     {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
+    {path: '/workspace/add', component: WorkspaceNew, name: 'WorkspaceNew'},
+    {path: '/workspace/edit/:id', component: WorkspaceEdit, name: 'WorkspaceEdit'},
     {path: '/login', component: Login, name: 'Login'},
     {path: '/lost-password', component: LostPassword, name: 'LostPassword'},
     {path: '/lost-password/:token', component: ResetPassword, name: 'ResetPassword'},

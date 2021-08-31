@@ -42,7 +42,7 @@ const util = {
 
                 if(typeof response[key] === 'object') {
                     response[key].forEach((error) => {
-                        out += ' ' + error + '<br>'
+                        out += ' ' + error
                     })
                 } else if(typeof response[key] === 'string') {
                     out += response[key]

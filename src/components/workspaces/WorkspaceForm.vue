@@ -1,9 +1,7 @@
 <template>
   <div>
-    <v-alert v-if="msg.status" dense outlined text :type="msg.status">
-      {{msg.content}}
-    </v-alert>
-    <v-form v-if="!sent" ref="form" v-model="valid" lazy-validation>
+    <message/>
+    <v-form ref="form" v-model="valid" lazy-validation>
       <v-progress-linear indeterminate color="blue darken-2" v-if="sending"/>
       <v-text-field v-model="name" :rules="nameRules" :disabled="sending" label="Workspace name"
                     required/>
@@ -28,9 +26,13 @@
 <script>
 import axios from "axios";
 import util from "@/services/util";
+import Message from "@/components/ui/Message";
 
 export default {
   name: "WorkspaceForm",
+  components: {
+    Message
+  },
   props: {
     details: Object || null,
     shortForm: Boolean
@@ -62,7 +64,7 @@ export default {
       let statusString = 'created'
       if (this.details) {
         method = 'put'
-        url = `${url}single/${this.details.pk}/`
+        url = `${util.apiUrl}/devices/workspace/single/${this.details.pk}/`
         statusString = 'updated'
       }
 
@@ -76,16 +78,22 @@ export default {
       }).then((response) => {
         this.$emit('response', response.data)
         this.sent = true
-        this.msg = {
+        this.$store.commit('setMessage', {
           status: 'success',
           content: `The workspace has been ${statusString}`
+        })
+
+        // on new workspace creation redirect to the list
+        if(!this.details) {
+          this.$router.replace({path: '/workspaces'})
         }
+
       }).catch((error) => {
-        this.msg = {
+        this.$store.commit('setMessage', {
           status: 'error',
           content: util.convertDjangoErrorToString(error.response.data)
-        }
-      }).finally(()=>{
+        })
+      }).finally(() => {
         this.sending = false
       })
     },
@@ -98,6 +106,15 @@ export default {
   },
   mounted() {
     this.getAllDevices()
+    if (this.details) {
+      this.name = this.details.name
+
+      if (this.details.devices) {
+        this.attachedDevices = this.details.devices.map((item) => {
+          return item.pk
+        })
+      }
+    }
   }
 }
 </script>

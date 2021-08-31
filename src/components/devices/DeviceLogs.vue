@@ -45,7 +45,6 @@
         <v-data-table v-else-if="logs.length"
                       :headers="headers"
                       :items="logs"
-                      hide-default-footer
                       class="elevation-1"
         ></v-data-table>
 

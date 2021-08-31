@@ -71,6 +71,8 @@ export default {
       switch (this.type) {
         case 'devices':
           return `/device/${item.pk}/edit`
+        case 'workspaces':
+          return `/workspace/edit/${item.pk}`
       }
     },
     toDelete(id) {

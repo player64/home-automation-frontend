@@ -124,17 +124,18 @@ export default {
         method: method,
         url: url,
         data: this.form
-      }).then(() => {
-        this.$store.commit('setMessage', {
-          status: 'success',
-          content: `The device has been ${statusString}`
-        })
-        // if new device redirect to devices route
-        if (!this.device) {
-          this.sent = true
-          this.$router.push({path: '/devices'})
-        }
       })
+          .then(() => {
+            this.$store.commit('setMessage', {
+              status: 'success',
+              content: `The device has been ${statusString}`
+            })
+            // if new device redirect to devices route
+            if (!this.device) {
+              this.sent = true
+              this.$router.replace({path: '/devices'})
+            }
+          })
           .catch((error) => {
             this.$store.commit('setMessage', {
               status: 'error',

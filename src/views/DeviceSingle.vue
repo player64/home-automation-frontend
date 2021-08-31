@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    device_id() {
+    deviceId() {
       return this.$route.params.id
     },
 
@@ -61,20 +61,21 @@ export default {
   },
   methods: {
     getDeviceDetails() {
-      this.axios.get(`${util.apiUrl}/devices/single/${this.device_id}/`)
+      this.axios.get(`${util.apiUrl}/devices/single/${this.deviceId}/`)
           .then((response) => {
             this.$store.commit('setTitle', `Device - ${response.data.name}`)
             this.device = response.data
-          }).catch((e) => {
-        if (e.response.status === 404) {
-          this.$router.push({path: 'not-found'})
-          return
-        }
-        this.error = util.convertDjangoErrorToString(e.response.data)
-
-      }).finally(() => {
-        this.loading = false
-      })
+          })
+          .catch((e) => {
+            if (e.response.status === 404) {
+              this.$router.replace({path: '/not-found'})
+              return
+            }
+            this.error = util.convertDjangoErrorToString(e.response.data)
+          })
+          .finally(() => {
+            this.loading = false
+          })
     }
   },
   mounted() {
@@ -98,7 +99,7 @@ export default {
 
 
     this.$store.commit('setTitle', "Device")
-    if (isNaN(this.device_id)) {
+    if (isNaN(this.deviceId)) {
       this.$router.push({path: '/not-found'})
       return
     }

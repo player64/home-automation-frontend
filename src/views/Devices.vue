@@ -2,7 +2,7 @@
   <div class="mt-5">
     <v-btn class="mb-5" x-large color="success" to="/device/add">Add new device +</v-btn>
     <message :redirected="true"/>
-    <loader v-if="loading" text="Loading device ..."/>
+    <loader v-if="loading" text="Loading devices ..."/>
     <items-list v-else-if="devices.length" :items="devices" :deleting="deleting" :callback="deleted"
                 @deleteConfirmed="deleteDevice" @closeWindow="deleted=false" class="mt-10"/>
     <v-alert v-else type="warning">
@@ -64,9 +64,10 @@ export default {
     this.axios.get(`${util.apiUrl}/devices/details/`)
         .then((response) => {
           this.devices = response.data
-        }).finally(() => {
-      this.loading = false
-    })
+        })
+        .finally(() => {
+          this.loading = false
+        })
   }
 }
 </script>

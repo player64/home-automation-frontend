@@ -84,7 +84,7 @@ export default {
         })
 
         // on new workspace creation redirect to the list
-        if(!this.details) {
+        if(!this.details && !this.shortForm) {
           this.$router.replace({path: '/workspaces'})
         }
 

@@ -2,7 +2,7 @@
   <div>
     <v-row v-for="item in items" :key="item.pk" align="center">
       <v-col cols="12" md="6">
-        {{ getName(item) }}
+        <v-btn :to="getViewLink(item)" depressed x-large text color="primary" v-html="getName(item)" />
       </v-col>
       <v-col cols="12" md="6">
         <v-btn-toggle>
@@ -59,6 +59,16 @@ export default {
     }
   },
   methods: {
+    getViewLink(item) {
+      switch (this.type) {
+        case 'devices':
+          return `/device/${item.pk}/info`
+        case 'workspaces':
+          return `/workspace/edit/${item.pk}`
+        default:
+          throw new Error(`This type: ${this.type} in Item List is not supported`)
+      }
+    },
     getName(item) {
       switch (this.type) {
         case 'users':
@@ -73,6 +83,8 @@ export default {
           return `/device/${item.pk}/edit`
         case 'workspaces':
           return `/workspace/edit/${item.pk}`
+        default:
+          throw new Error(`This type: ${this.type} in Item List is not supported`)
       }
     },
     toDelete(id) {

@@ -14,6 +14,8 @@ import WorkspaceNew from "@/views/WorkspaceNew";
 import WorkspaceEdit from "@/views/WorkspaceEdit";
 import UserNew from "@/views/UserNew";
 import UserEdit from "@/views/UserEdit";
+import EventNew from "@/views/EventNew";
+import EventEdit from "@/views/EventEdit";
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
@@ -26,6 +28,8 @@ export const routes = [
     {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
     {path: '/workspace/add', component: WorkspaceNew, name: 'WorkspaceNew'},
     {path: '/workspace/edit/:id', component: WorkspaceEdit, name: 'WorkspaceEdit'},
+    {path: '/event/add/:deviceId', component: EventNew, name: 'EventNew'},
+    {path: '/event/edit/:id', component: EventEdit, name: 'EventEdit'},
     {path: '/login', component: Login, name: 'Login'},
     {path: '/lost-password', component: LostPassword, name: 'LostPassword'},
     {path: '/lost-password/:token', component: ResetPassword, name: 'ResetPassword'},

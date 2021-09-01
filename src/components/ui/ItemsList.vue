@@ -85,6 +85,12 @@ export default {
             viewLink: `/user/${item.pk}`,
             editLink: `/user/${item.pk}`,
           } : 'user'
+        case 'events':
+          return (item) ? {
+            name: item.name,
+            viewLink: `/event/edit/${item.pk}`,
+            editLink: `/event/edit/${item.pk}`,
+          } : 'event'
         default:
           throw new Error(`This type: ${this.type} in Item List is not supported`)
       }

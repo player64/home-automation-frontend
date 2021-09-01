@@ -1,6 +1,7 @@
 import {sensorTypes} from './types/sensors'
 import {deviceTypes} from "./types/devicesType"
 import {firmwares} from './types/firmwares'
+import {eventRules, eventTypes} from "@/services/types/eventsType"
 
 function objectToArrayOfObjects(obj) {
     return Object.keys(obj).map((key) => {
@@ -20,6 +21,14 @@ const factories = {
         throw new Error(`Readings not defined for ${type} in the sensorTypes`)
     },
 
+    getSensorReadingsTypesSelectForm: (type) => {
+        const sensor = factories.getSensorReadingsByType(type)
+
+        return sensor.map((item) => {
+            return item.key
+        })
+    },
+
     sensorTypes: Object.keys(sensorTypes),
 
     getFirmwareReadableFormat: (type) => {
@@ -28,6 +37,14 @@ const factories = {
 
     getFirmwareList: () => {
         return objectToArrayOfObjects(firmwares)
+    },
+
+    getEventsType: () => {
+        return objectToArrayOfObjects(eventTypes)
+    },
+
+    getEventsRules: () => {
+        return eventRules
     },
 
     getDeviceTypeReadableFormat: (type) => {

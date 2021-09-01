@@ -11,7 +11,8 @@ export const store = new Vuex.Store({
         message: {
             content: null,
             status: null
-        }
+        },
+        device: null
     },
     mutations: {
         setAuthenticate(state, payload) {
@@ -28,6 +29,9 @@ export const store = new Vuex.Store({
                 content: null,
                 status: null
             }
+        },
+        setDevice(state, payload) {
+            state.device = payload
         }
     },
     getters: {
@@ -39,6 +43,9 @@ export const store = new Vuex.Store({
         },
         message(state) {
             return state.message
+        },
+        device(state) {
+            return state.device
         }
     }
 })

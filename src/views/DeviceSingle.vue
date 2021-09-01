@@ -37,7 +37,6 @@ export default {
     return {
       device: null,
       loading: true,
-      error: true,
       tab: 0, // open third tab (edit) on edit
     }
   },
@@ -71,7 +70,10 @@ export default {
               this.$router.replace({path: '/not-found'})
               return
             }
-            this.error = util.convertDjangoErrorToString(e.response.data)
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(e.response.data)
+            })
           })
           .finally(() => {
             this.loading = false

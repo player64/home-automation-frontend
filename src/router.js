@@ -12,14 +12,17 @@ import {store} from "@/store"
 import DeviceNew from "@/views/DeviceNew";
 import WorkspaceNew from "@/views/WorkspaceNew";
 import WorkspaceEdit from "@/views/WorkspaceEdit";
+import UserNew from "@/views/UserNew";
+import UserEdit from "@/views/UserEdit";
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},
     {path: '/devices', component: Devices, name: 'Devices'},
-    //{path: '/device/:id', component: DeviceSingle, name: 'Device Details'},
     {path: '/device/:id/:tab', component: DeviceSingle, name: 'DeviceDetails'},
     {path: '/device/add', component: DeviceNew, name: 'DeviceNew'},
     {path: '/users', component: Users, name: 'Users'},
+    {path: '/user/add', component: UserNew, name: 'UserAdd'},
+    {path: '/user/:id', component: UserEdit, name: 'UserEdit'},
     {path: '/workspaces', component: Workspaces, name: 'Workspaces'},
     {path: '/workspace/add', component: WorkspaceNew, name: 'WorkspaceNew'},
     {path: '/workspace/edit/:id', component: WorkspaceEdit, name: 'WorkspaceEdit'},

@@ -42,7 +42,6 @@ export default {
             this.devices = this.devices.filter((value) => {
               return value.pk !== id
             })
-            this.deleted = true
             this.$store.commit('setMessage', {
               status: 'success',
               content: 'The device has been deleted'
@@ -55,6 +54,7 @@ export default {
             })
           })
           .finally(() => {
+            this.deleted = true
             this.deleting = false
           })
     }

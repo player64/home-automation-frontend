@@ -41,7 +41,7 @@ export default {
             this.workspaces = this.workspaces.filter((value) => {
               return value.pk !== id
             })
-            this.deleted = true
+
             this.$store.commit('setMessage', {
               status: 'success',
               content: 'The workspace has been deleted'
@@ -54,6 +54,7 @@ export default {
             })
           })
           .finally(() => {
+            this.deleted = true
             this.deleting = false
           })
     }

@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import util from "@/services/util";
-import Message from "@/components/ui/Message";
+import axios from "axios"
+import util from "@/services/util"
+import Message from "@/components/ui/Message"
 
 export default {
   name: "WorkspaceForm",

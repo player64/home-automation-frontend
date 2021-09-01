@@ -4,7 +4,6 @@
     <v-btn to="/workspaces" class="mt-5 mb-10">
       Back to workspace list
     </v-btn>
-
     <loader v-if="loading" text="Loading workspace ..."/>
     <v-row v-else-if="workspace">
       <v-col cols="12" md="8" xl="5">
@@ -42,7 +41,7 @@ export default {
     getWorkspace() {
       this.axios.get(`${util.apiUrl}/devices/workspace/single/${this.workspaceId}/`)
           .then((response) => {
-            this.$store.commit('setTitle', `Workspace - ${response.data.name}`)
+            this.$store.commit('setTitle', `Workspace edit - ${response.data.name}`)
             this.workspace = response.data
           })
           .catch((e) => {
@@ -63,7 +62,7 @@ export default {
   mounted() {
     this.$store.commit('setTitle', "Workspace")
     if (isNaN(this.workspaceId)) {
-      this.$router.push({path: '/not-found'})
+      this.$router.replace({path: '/not-found'})
       return
     }
     this.getWorkspace()

@@ -7,35 +7,35 @@
             To entered the email address has been submitted a link to reset the password.
           </v-alert>
         </v-card>
-
         <v-card v-else class="pa-2" outlined tile>
           <v-progress-linear v-if="sending" indeterminate color="blue darken-2"/>
-
           <v-form ref="form" v-model="valid" lazy-validation>
-
             <v-text-field v-model="email" :rules="emailRules" :disabled="sending" label="Email" required/>
             <div class="recaptcha">
               <div>
-                <vue-recaptcha class="reCaptcha reCaptcha--left"
-                               :sitekey="reCaptcha.key"
-                               :loadRecaptchaScript="true"
-                               @verify="reCaptchaVerify"
-                               @expired="reCaptcha.response = false"/>
-                <div v-if="reCaptcha.touched" class="error--text" style="font-size: 12px">
-                  Please resolve the captcha challenge
+                <v-alert v-if="!reCaptcha.key" type="error">
+                  The recaptcha key needs to be added to environment variable
+                </v-alert>
+                <div v-else>
+                  <vue-recaptcha class="reCaptcha reCaptcha--left"
+                                 :sitekey="reCaptcha.key"
+                                 :loadRecaptchaScript="true"
+                                 @verify="reCaptchaVerify"
+                                 @expired="reCaptcha.response = false"/>
+                  <div v-if="reCaptcha.touched" class="error--text" style="font-size: 12px">
+                    Please resolve the captcha challenge
+                  </div>
                 </div>
+
               </div>
               <router-link to="login">Login</router-link>
             </div>
-
-
-            <v-btn :disabled="!valid || sending" color="success" class="mr-4" @click="passwordResetRequest">
+            <v-btn v-if="reCaptcha.key" :disabled="!valid || sending" color="success" class="mr-4"
+                    @click="passwordResetRequest">
               reset password
             </v-btn>
-
           </v-form>
         </v-card>
-
       </v-col>
     </v-row>
   </v-container>

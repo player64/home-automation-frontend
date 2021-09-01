@@ -2,7 +2,7 @@
   <div>
     <loader v-if="loading" text="Loading device ..."/>
     <div v-else-if="device">
-      <v-tabs v-model="tab" align-with-title>
+      <v-tabs v-model="tab">
         <v-tabs-slider/>
         <v-tab v-for="(item, key) in tabs" :key="key" v-html="item.name"/>
       </v-tabs>
@@ -100,7 +100,7 @@ export default {
 
     this.$store.commit('setTitle', "Device")
     if (isNaN(this.deviceId)) {
-      this.$router.push({path: '/not-found'})
+      this.$router.replace({path: '/not-found'})
       return
     }
 

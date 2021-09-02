@@ -5,7 +5,6 @@ import {eventRules, eventTypes} from "@/services/types/eventsType"
 
 function objectToArrayOfObjects(obj) {
     return Object.keys(obj).map((key) => {
-        //return {[key]: obj[key]}
         return {
             value: key,
             text: obj[key]
@@ -24,9 +23,12 @@ const factories = {
     getSensorReadingsTypesSelectForm: (type) => {
         const sensor = factories.getSensorReadingsByType(type)
 
-        return sensor.map((item) => {
-            return item.key
-        })
+        return sensor.map((item) => item.key)
+    },
+
+    getSensorUnits: (sensor, type) => {
+        const readings = factories.getSensorReadingsByType(sensor).filter((item) => item.key === type)
+        return (readings.length) ? readings[0].units : ''
     },
 
     sensorTypes: Object.keys(sensorTypes),

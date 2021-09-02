@@ -5,7 +5,7 @@
   <v-row>
     <v-col cols="12" md="8" xl="5">
       <message />
-      <event-form v-if="valid" />
+      <event-form v-if="valid" :deviceId="deviceId" />
     </v-col>
   </v-row>
 </div>
@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     deviceId() {
-      return this.$route.params.deviceId
+      return parseInt(this.$route.params.deviceId)
     },
   },
   data() {
@@ -36,7 +36,6 @@ export default {
     }
   },
   methods: {
-    // /devices/details/?type=sensor
     getDeviceDetails() {
       this.axios.get(`${util.apiUrl}/devices/single/${this.deviceId}/`)
           .then((response) => {

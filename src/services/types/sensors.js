@@ -8,5 +8,5 @@ export const sensorTypes = {
             key: 'humidity',
             units: '%'
         }
-    ],
+    ]
 }

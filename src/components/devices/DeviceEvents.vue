@@ -37,8 +37,10 @@ export default {
     }
   },
   beforeMount() {
-    if ('events' in this.data) return
+    console.log(this.data.events)
+    if (!('events' in this.data)) return
     this.events = this.data.events
+
   },
   methods: {
     deleteEvent(id) {

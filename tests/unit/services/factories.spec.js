@@ -13,6 +13,10 @@ describe('Testing types methods', () => {
             .toThrow('Readings not defined for test in the sensorTypes')
     })
 
+    it('getSensorUnits', () => {
+        expect(factories.getSensorUnits('am2301', 'humidity')).toBe('%')
+    })
+
     it('getSensorReadingsTypesSelectForm', () => {
         expect(factories.getSensorReadingsTypesSelectForm('am2301')).toStrictEqual(
             ['temperature', 'humidity']

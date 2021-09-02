@@ -27,7 +27,7 @@ const util = {
         }
     },
     convertDjangoArrayOfObjectsToSelectField: (array) => {
-        if (!array.length) return []
+        if (!array || !array.length) return []
         return array.map((item) => {
             return util.convertDjangoObjectToSelectField(item)
         })

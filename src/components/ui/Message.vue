@@ -1,5 +1,5 @@
 <template>
-  <v-alert v-if="message.status && message.content" dense outlined text :type="message.status" dismissible :close="closeMessage">
+  <v-alert v-if="message.status && message.content" dense outlined text :type="message.status" dismissible @close="closeMessage">
     {{message.content}}
   </v-alert>
 </template>

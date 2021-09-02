@@ -44,7 +44,7 @@ export default {
       valid: true,
       name: '',
       attachedDevices: [],
-      devices: [],
+      devices: this.$store.getters.devices,
       msg: {
         content: null,
         status: null
@@ -83,6 +83,9 @@ export default {
           content: `The workspace has been ${statusString}`
         })
 
+        this.$store.commit('setWorkspaces', [])
+        this.$store.commit('setWorkspace', null)
+
         // on new workspace creation redirect to the list
         if(!this.details && !this.shortForm) {
           this.$router.replace({path: '/workspaces'})
@@ -98,9 +101,14 @@ export default {
       })
     },
     getAllDevices() {
+      if(this.devices.length) {
+        this.devices =  util.convertDjangoArrayOfObjectsToSelectField(this.devices)
+        return
+      }
       axios.get(`${util.apiUrl}/devices/details/`)
           .then((response) => {
             this.devices = util.convertDjangoArrayOfObjectsToSelectField(response.data)
+            this.$store.commit('setDevices', response.data)
           })
     },
   },

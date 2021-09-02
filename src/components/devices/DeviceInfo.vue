@@ -83,15 +83,8 @@ export default {
               status: 'success',
               content: `The device ${this.data.name} has been deleted`
             })
+            this.$store.commit('setDevices', [])
             this.$router.push({path: '/devices'})
-            /*this.callBackConfirmation = {
-              text: 'The device has been deleted',
-              status: 'success',
-              backLink: {
-                text: 'Go back to devices',
-                path: '/devices'
-              }
-            }*/
           }).catch(() => {
         this.$store.commit('setMessage',  {
           text: 'An error has occurred. The device hasn\'t been deleted.',

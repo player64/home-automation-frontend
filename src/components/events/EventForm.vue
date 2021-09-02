@@ -60,14 +60,14 @@ export default {
   },
   methods: {
     changeEventType(value) {
-        const components = {
-          time: 'EventTimeForm',
-          sensor: 'EventSensorForm'
-        }
-        if(!(value in components)) {
-          throw new Error(`There is not component defined for this type: ${value}`)
-        }
-        this.formType = components[value]
+      const components = {
+        time: 'EventTimeForm',
+        sensor: 'EventSensorForm'
+      }
+      if (!(value in components)) {
+        throw new Error(`There is not component defined for this type: ${value}`)
+      }
+      this.formType = components[value]
     },
     eventForm() {
       if (!this.$refs.form.validate()) return
@@ -83,24 +83,32 @@ export default {
       })
 
       this.event.action = (this.event.action) ? 'ON' : 'OFF'
-
-      this.axios.post(`${util.apiUrl}/devices/event/`, this.event)
-        .then(()=>{
-          this.$store.commit('setMessage', {
-            status: 'success',
-            content: `Event has been set`
+      let url = `${util.apiUrl}/devices/event`
+      this.axios({
+        method: (this.eventData) ? 'put' : 'post',
+        url: url + ((this.eventData) ? `/${this.eventData.id}/` : `/`),
+        data: this.event
+      })
+          .then((response) => {
+            this.$store.commit('setMessage', {
+              status: 'success',
+              content: `The event has been ` + ((this.eventData) ? `edited` : 'created')
+            })
+            this.$store.commit('setEvent', null)
+            if (!this.eventData) {
+              this.$router.replace({path: `/device/${this.deviceId}/event`})
+            }
+            this.event.action = (response.data.action === 'ON')
           })
-          this.$router.replace({path: `/device/${this.deviceId}/event`})
-        })
-        .catch((e) => {
-          this.$store.commit('setMessage', {
-            status: 'error',
-            content: util.convertDjangoErrorToString(e.response.data)
+          .catch((e) => {
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(e.response.data)
+            })
           })
-        })
-        .finally(() => {
-          this.sending = false
-        })
+          .finally(() => {
+            this.sending = false
+          })
     },
     updateFields(fields) {
       Object.keys(fields).map((key) => {
@@ -110,10 +118,11 @@ export default {
       })
     }
   },
-  beforeMount() {
+  mounted() {
     if (this.eventData) {
       this.event = this.eventData
-      this.event.action = (this.event.action === 'ON')
+      this.event.action = (this.eventData.action === 'ON')
+      this.changeEventType(this.event.type)
     }
   }
 }

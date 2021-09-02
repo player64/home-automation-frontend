@@ -29,7 +29,7 @@ export default {
       loading: true,
       deleting: false,
       deleted: false,
-      users: []
+      users: this.$store.getters.users
     }
   },
   methods: {
@@ -40,6 +40,7 @@ export default {
             this.users = this.users.filter((value) => {
               return value.pk !== id
             })
+            this.$store.commit('setUsers', this.users)
             this.deleted = true
             this.$store.commit('setMessage', {
               status: 'success',
@@ -60,9 +61,14 @@ export default {
   },
   mounted() {
     this.$store.commit('setTitle', "Users")
+    if(this.users.length) {
+      this.loading = false
+      return
+    }
     this.axios.get(`${util.apiUrl}/users/`)
         .then((response) => {
           this.users = response.data
+          this.$store.commit('setUsers', this.users)
         })
         .catch((e) => {
           this.$store.commit('setMessage', {

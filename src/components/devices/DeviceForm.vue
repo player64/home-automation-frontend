@@ -88,7 +88,7 @@ export default {
         v => !!v || 'Sensor type is required'
       ],
 
-      workspaces: [],
+      workspaces: this.$store.getters.workspaces,
       firmwares: [],
       sensorTypes: [],
       deviceTypes: []
@@ -130,6 +130,9 @@ export default {
               status: 'success',
               content: `The device has been ${statusString}`
             })
+            // clear store
+            this.$store.commit('setDevice', null)
+            this.$store.commit('setDevices', [])
             // if new device redirect to devices route
             if (!this.device) {
               this.sent = true
@@ -164,8 +167,6 @@ export default {
       this.form.gpio = this.device.gpio
       this.form.sensor_type = this.device.sensor_type
       this.form.workspace = this.device.workspace
-
-      this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(this.device.workspaces)
     }
 
     // add firmwares and sensor types
@@ -178,7 +179,10 @@ export default {
       axios.get(`${util.apiUrl}/devices/workspaces/`)
           .then((response) => {
             this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(response.data)
+            this.$store.commit('setWorkspaces', response.data)
           })
+    } else {
+      this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(this.workspaces)
     }
 
   }

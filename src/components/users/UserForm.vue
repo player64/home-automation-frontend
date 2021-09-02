@@ -42,7 +42,7 @@ export default {
   name: "UserForm",
   props: {
     userData: Object || null,
-    userId: String || null,
+    userId: Number || null,
   },
   data() {
     return {
@@ -105,6 +105,9 @@ export default {
           status: 'success',
           content: `The user has been ${statusString}`
         })
+
+        this.$store.commit('setUser', null)
+        this.$store.commit('setUsers', [])
 
         // on new user creation redirect to the list
         if(!this.userData) {

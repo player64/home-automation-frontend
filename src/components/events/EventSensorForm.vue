@@ -2,12 +2,10 @@
   <div>
     <v-select v-model="sensor" :rules="sensorRule" :disabled="sending" label="Sensor" :items="sensors.form"
               @input="setSensor($event)"/>
-
-
     <v-row v-if="sensor" align-content="center">
       <v-col cols="4">
         <v-select v-model="reading_type" :rules="readingRule" :disabled="sending" label="Reading type"
-                  :items="getSensorReadings" @input="setFields($event, 'reading_type')" />
+                  :items="getSensorReadings" @input="setFields($event, 'reading_type')"/>
       </v-col>
       <v-col cols="4">
         <v-select v-model="rule" :rules="ruleRule" :disabled="sending" label="Event rule" :items="rules"
@@ -89,11 +87,20 @@ export default {
 
   },
   mounted() {
+    if (this.event) {
+      this.sensor = this.event.sensor
+      this.reading_type = this.event.reading_type
+      this.rule = this.event.rule
+      this.value = this.event.value
+    }
     this.axios.get(`${util.apiUrl}/devices/details/?type=sensor`)
         .then((response) => {
           this.sensors = {
             form: util.convertDjangoArrayOfObjectsToSelectField(response.data),
             raw: response.data
+          }
+          if(this.event) {
+            this.setSensor(this.sensor)
           }
         })
         .catch((e) => {

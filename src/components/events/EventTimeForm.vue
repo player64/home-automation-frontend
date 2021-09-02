@@ -14,7 +14,7 @@
     ></v-text-field>
 
   <v-time-picker
-      v-if="openPicker || !sending"
+      v-if="openPicker"
       v-model="event.time"
       format="24hr"
   ></v-time-picker>

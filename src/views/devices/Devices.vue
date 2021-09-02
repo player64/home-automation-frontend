@@ -1,12 +1,12 @@
 <template>
   <div class="mt-5">
-    <v-btn class="mb-5" x-large color="success" to="/workspace/add">Add new workspace +</v-btn>
+    <v-btn class="mb-5" x-large color="success" to="/device/add">Add new device +</v-btn>
     <message :redirected="true"/>
-    <loader v-if="loading" text="Loading workspaces ..."/>
-    <items-list v-else-if="workspaces.length" :items="workspaces" :deleting="deleting" :callback="deleted"
-                type="workspaces" @deleteConfirmed="deleteWorkspace" @closeWindow="deleted=false" class="mt-10"/>
+    <loader v-if="loading" text="Loading devices ..."/>
+    <items-list v-else-if="devices.length" :items="devices" :deleting="deleting" :callback="deleted"
+                @deleteConfirmed="deleteDevice" @closeWindow="deleted=false" class="mt-10"/>
     <v-alert v-else type="warning">
-      No workspaces found.
+      No devices found.
     </v-alert>
   </div>
 </template>
@@ -18,8 +18,9 @@ import Message from "@/components/ui/Message"
 import Loader from "@/components/ui/Loader"
 
 export default {
-  name: "Workspaces",
+  name: "Devices",
   components: {
+    // DialogForm,
     ItemsList,
     Loader,
     Message
@@ -29,22 +30,23 @@ export default {
       loading: true,
       deleting: false,
       deleted: false,
-      workspaces: []
+      devices: []
     }
   },
   methods: {
-    deleteWorkspace(id) {
+    deleteDevice(id) {
       this.deleting = true
 
-      this.axios.delete(`${util.apiUrl}/devices/workspace/${id}/`)
+      this.axios.delete(`${util.apiUrl}/devices/${id}`)
           .then(() => {
-            this.workspaces = this.workspaces.filter((value) => {
+            this.devices = this.devices.filter((value) => {
               return value.pk !== id
             })
-
+            // set store
+            this.$store.commit('setDevices', this.devices)
             this.$store.commit('setMessage', {
               status: 'success',
-              content: 'The workspace has been deleted'
+              content: 'The device has been deleted'
             })
           })
           .catch((e) => {
@@ -60,11 +62,18 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit('setTitle', "Workspaces")
-
-    this.axios.get(`${util.apiUrl}/devices/workspaces/`)
+    this.$store.commit('setTitle', "Devices")
+    // check store for devices
+    const storeDevices = this.$store.getters.devices
+    if(storeDevices.length) {
+      this.devices = storeDevices
+      this.loading = false
+      return
+    }
+    this.axios.get(`${util.apiUrl}/devices/details/`)
         .then((response) => {
-          this.workspaces = response.data
+          this.devices = response.data
+          this.$store.commit('setDevices', this.devices)
         })
         .finally(() => {
           this.loading = false

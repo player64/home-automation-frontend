@@ -12,7 +12,13 @@ export const store = new Vuex.Store({
             content: null,
             status: null
         },
-        device: null
+        device: null,
+        devices: [],
+        event: null,
+        workspace: null,
+        workspaces: [],
+        user: null,
+        users: []
     },
     mutations: {
         setAuthenticate(state, payload) {
@@ -30,9 +36,30 @@ export const store = new Vuex.Store({
                 status: null
             }
         },
+        // devices
         setDevice(state, payload) {
             state.device = payload
-        }
+        },
+        setDevices(state, payload) {
+            state.devices = payload
+        },
+        setEvent(state, payload) {
+            state.event = payload
+        },
+        // workspaces
+        setWorkspace(state, payload) {
+            state.workspace = payload
+        },
+        setWorkspaces(state, payload) {
+            state.workspaces = payload
+        },
+        // users
+        setUser(state, payload) {
+            state.user = payload
+        },
+        setUsers(state, payload) {
+            state.users = payload
+        },
     },
     getters: {
         isAuth(state) {
@@ -46,6 +73,24 @@ export const store = new Vuex.Store({
         },
         device(state) {
             return state.device
-        }
+        },
+        devices(state) {
+            return state.devices
+        },
+        event(state) {
+            return state.event
+        },
+        workspace(state) {
+            return state.workspace
+        },
+        workspaces(state) {
+            return state.workspaces
+        },
+        user(state) {
+            return state.user
+        },
+        users(state) {
+            return state.users
+        },
     }
 })

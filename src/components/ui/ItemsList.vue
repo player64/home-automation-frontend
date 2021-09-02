@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="12" md="8" xl="6">
+      <v-col cols="12" xl="10">
         <v-row v-for="(item, key) in items" :key="item.pk" align="center" :class="{'grey lighten-3': key % 2 !== 0}">
           <v-col cols="6" md="8" lg="10">
             <v-btn :to="getItem(item).viewLink"

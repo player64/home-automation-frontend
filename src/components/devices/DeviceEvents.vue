@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-4">Device events - {{ data.name }}</h1>
     <v-row>
-      <v-col cols="12" xl="6" lg="7" md="9">
+      <v-col cols="12" xl="6" lg="10" md="11">
         <v-btn class="mb-5" x-large color="success" :to="`/event/add/${data.pk}`">Add new event +</v-btn>
         <message :redirected="true"/>
         <items-list v-if="events.length" :items="events" :deleting="deleting" :callback="deleted"
@@ -18,6 +18,7 @@
 <script>
 import ItemsList from "@/components/ui/ItemsList"
 import Message from "@/components/ui/Message"
+import util from "@/services/util";
 
 export default {
   name: "DeviceEvents",
@@ -37,14 +38,32 @@ export default {
     }
   },
   beforeMount() {
-    console.log(this.data.events)
     if (!('events' in this.data)) return
     this.events = this.data.events
-
   },
   methods: {
     deleteEvent(id) {
-      console.log(id)
+      this.deleting = true
+      this.axios.delete(`${util.apiUrl}/devices/event/${id}/`)
+          .then(() => {
+            this.events = this.events.filter((value) => {
+              return value.pk !== id
+            })
+            this.$store.commit('setMessage', {
+              status: 'success',
+              content: 'The event has been deleted'
+            })
+          })
+          .catch((e) => {
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(e.response.data)
+            })
+          })
+          .finally(() => {
+            this.deleted = true
+            this.deleting = false
+          })
     }
   }
 }

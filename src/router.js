@@ -2,20 +2,20 @@ import Dashboard from "@/views/Dashboard"
 import Login from "@/views/login/Login"
 import LostPassword from "@/views/login/LostPassword"
 import ResetPassword from "@/views/login/ResetPassword"
-import DeviceSingle from "@/views/DeviceSingle"
+import DeviceSingle from "@/views/devices/DeviceSingle"
 import VueRouter from "vue-router"
-import Devices from "@/views/Devices"
-import Users from "@/views/Users"
-import Workspaces from "@/views/Workspaces"
+import Devices from "@/views/devices/Devices"
+import Users from "@/views/users/Users"
+import Workspaces from "@/views/workspaces/Workspaces"
 import NotFound from "@/views/NotFound";
 import {store} from "@/store"
-import DeviceNew from "@/views/DeviceNew";
-import WorkspaceNew from "@/views/WorkspaceNew";
-import WorkspaceEdit from "@/views/WorkspaceEdit";
-import UserNew from "@/views/UserNew";
-import UserEdit from "@/views/UserEdit";
-import EventNew from "@/views/EventNew";
-import EventEdit from "@/views/EventEdit";
+import DeviceNew from "@/views/devices/DeviceNew";
+import WorkspaceNew from "@/views/workspaces/WorkspaceNew";
+import WorkspaceEdit from "@/views/workspaces/WorkspaceEdit";
+import UserNew from "@/views/users/UserNew";
+import UserEdit from "@/views/users/UserEdit";
+import EventNew from "@/views/events/EventNew";
+import EventEdit from "@/views/events/EventEdit";
 
 export const routes = [
     {path: '/', component: Dashboard, name: 'Dashboard'},

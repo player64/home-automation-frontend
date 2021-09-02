@@ -28,7 +28,12 @@ export default {
   },
   computed: {
     workspaceId() {
-      return this.$route.params.id
+      const id = this.$route.params.id
+      if (isNaN(id)) {
+        this.$router.replace({path: '/not-found'})
+        return
+      }
+      return parseInt(id)
     }
   },
   data() {
@@ -39,10 +44,17 @@ export default {
   },
   methods: {
     getWorkspace() {
+      const storeWorkspace = this.$store.getters.workspace
+      if (storeWorkspace && 'pk' in storeWorkspace && storeWorkspace.pk === this.workspaceId) {
+        this.workspace = storeWorkspace
+        this.loading = false
+        return
+      }
       this.axios.get(`${util.apiUrl}/devices/workspace/single/${this.workspaceId}/`)
           .then((response) => {
             this.$store.commit('setTitle', `Workspace edit - ${response.data.name}`)
             this.workspace = response.data
+            this.$store.commit('setWorkspace', this.workspace)
           })
           .catch((e) => {
             if (e.response.status === 404) {

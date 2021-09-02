@@ -41,7 +41,12 @@ export default {
   },
   computed: {
     userId() {
-      return this.$route.params.id
+      const id = this.$route.params.id
+      if (isNaN(id)) {
+        this.$router.replace({path: '/not-found'})
+        return
+      }
+      return parseInt(id)
     },
     tabs() {
       return [
@@ -59,10 +64,17 @@ export default {
   },
   methods: {
     getUser() {
+      const storeUser = this.$store.getters.user
+      if (storeUser && 'pk' in storeUser && storeUser.pk === this.userId) {
+        this.user = storeUser
+        this.loading = false
+        return
+      }
       this.axios.get(`${util.apiUrl}/users/detail/${this.userId}/`)
           .then((response) => {
             this.$store.commit('setTitle', `User edit - ${response.data.username}`)
             this.user = response.data
+            this.$store.commit('setUser', this.user)
           })
           .catch((e) => {
             if (e.response.status === 404) {

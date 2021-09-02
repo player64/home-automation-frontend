@@ -22,16 +22,16 @@
 <script>
 // <v-card-text v-text="item.name"></v-card-text>
 import util from "@/services/util";
-import Loader from '../components/ui/Loader'
+import Loader from '../../components/ui/Loader'
 
 export default {
   name: "DeviceSingle",
   components: {
     Loader,
-    DeviceInfo: () => import('../components/devices/DeviceInfo'),
-    DeviceLogs: () => import('../components/devices/DeviceLogs'),
-    DeviceEvents: () => import('../components/devices/DeviceEvents'),
-    DeviceEdit: () => import('../components/devices/DeviceEdit'),
+    DeviceInfo: () => import('../../components/devices/DeviceInfo'),
+    DeviceLogs: () => import('../../components/devices/DeviceLogs'),
+    DeviceEvents: () => import('../../components/devices/DeviceEvents'),
+    DeviceEdit: () => import('../../components/devices/DeviceEdit'),
   },
   data() {
     return {
@@ -42,7 +42,12 @@ export default {
   },
   computed: {
     deviceId() {
-      return this.$route.params.id
+      const id = this.$route.params.id
+      if (isNaN(id)) {
+        this.$router.replace({path: '/not-found'})
+        return
+      }
+      return parseInt(id)
     },
 
     tabs() {
@@ -64,6 +69,8 @@ export default {
           .then((response) => {
             this.$store.commit('setTitle', `Device - ${response.data.name}`)
             this.device = response.data
+            // set device into store
+            this.$store.commit('setDevice', this.device)
           })
           .catch((e) => {
             if (e.response.status === 404) {
@@ -98,14 +105,7 @@ export default {
       default:
         this.tab = 0
     }
-
-
     this.$store.commit('setTitle', "Device")
-    if (isNaN(this.deviceId)) {
-      this.$router.replace({path: '/not-found'})
-      return
-    }
-
     this.getDeviceDetails()
   }
 }

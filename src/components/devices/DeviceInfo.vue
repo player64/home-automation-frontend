@@ -72,8 +72,7 @@ export default {
   methods: {
     getWorkspaceNameById() {
       if (!this.data.workspace) return 'Not attached to any workspace'
-      const filtered = this.data.workspaces.filter((item) => item.pk === this.data.workspace)
-      return filtered[0].name
+      return this.data.workspace.name
     },
     deleteDevice() {
       this.deleting = true

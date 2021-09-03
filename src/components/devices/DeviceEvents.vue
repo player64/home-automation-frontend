@@ -37,10 +37,6 @@ export default {
       events: []
     }
   },
-  beforeMount() {
-    if (!('events' in this.data)) return
-    this.events = this.data.events
-  },
   methods: {
     deleteEvent(id) {
       this.deleting = true
@@ -65,6 +61,18 @@ export default {
             this.deleting = false
           })
     }
+  },
+  mounted() {
+    this.axios.get(`${util.apiUrl}/devices/events/${this.data.pk}/`)
+      .then((response) => {
+        this.events = response.data
+      })
+      .catch((e) => {
+        this.$store.commit('setMessage', {
+          status: 'error',
+          content: util.convertDjangoErrorToString(e.response.data)
+        })
+      })
   }
 }
 </script>

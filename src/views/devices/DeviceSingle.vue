@@ -65,6 +65,13 @@ export default {
   },
   methods: {
     getDeviceDetails() {
+      // get device from store
+      const storeDevice = this.$store.getters.device
+      if (storeDevice && 'pk' in storeDevice && storeDevice.pk === this.deviceId) {
+        this.device = storeDevice
+        this.loading = false
+        return
+      }
       this.axios.get(`${util.apiUrl}/devices/single/${this.deviceId}/`)
           .then((response) => {
             this.$store.commit('setTitle', `Device - ${response.data.name}`)

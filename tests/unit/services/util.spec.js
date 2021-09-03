@@ -28,7 +28,7 @@ describe('Testing utilities methods', () => {
     it('convertDjangoErrorToString', () => {
         const error = {name: ['This field is required.']}
         expect(util.convertDjangoErrorToString(error))
-            .toBe('name: This field is required.<br>')
+            .toBe('name: This field is required.')
 
         const error2 = {error: 'Something went wrong'}
         expect(util.convertDjangoErrorToString(error2))

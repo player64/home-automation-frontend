@@ -91,9 +91,16 @@ export default {
       this.axios.get(`${util.apiUrl}/devices/log/${this.data.pk}/?date=${this.date}`)
           .then((response) => {
             this.logs = this.convertLogsToTableFormat(response.data)
-          }).finally(() => {
-        this.loading = false
-      })
+          })
+          .catch((e) => {
+            this.$store.commit('setMessage', {
+              status: 'error',
+              content: util.convertDjangoErrorToString(e.response.data)
+            })
+          })
+          .finally(() => {
+            this.loading = false
+          })
     },
     sensorKeys() {
       const factory = factories.getSensorReadingsByType(this.data.sensor_type)
@@ -156,8 +163,8 @@ export default {
     }
   },
   mounted() {
-    this.logs = this.convertLogsToTableFormat(this.data.logs)
     this.date = this.today
+    this.getLogs()
   }
 }
 </script>

@@ -95,11 +95,12 @@ export default {
     }
     this.axios.get(`${util.apiUrl}/devices/details/?type=sensor`)
         .then((response) => {
+          if(!response.data.length) return
           this.sensors = {
             form: util.convertDjangoArrayOfObjectsToSelectField(response.data),
             raw: response.data
           }
-          if(this.event) {
+          if(this.sensor) {
             this.setSensor(this.sensor)
           }
         })

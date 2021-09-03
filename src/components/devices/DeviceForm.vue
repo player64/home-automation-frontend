@@ -166,7 +166,7 @@ export default {
       this.form.firmware = this.device.firmware
       this.form.gpio = this.device.gpio
       this.form.sensor_type = this.device.sensor_type
-      this.form.workspace = this.device.workspace
+      this.form.workspace = this.device.workspace.pk
     }
 
     // add firmwares and sensor types
@@ -174,17 +174,16 @@ export default {
     this.sensorTypes = factories.sensorTypes
     this.deviceTypes = factories.getDeviceTypeList()
 
-    if (!this.workspaces.length) {
-      // get workspace list
-      axios.get(`${util.apiUrl}/devices/workspaces/`)
-          .then((response) => {
-            this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(response.data)
-            this.$store.commit('setWorkspaces', response.data)
-          })
-    } else {
+    if (this.workspaces.length) {
       this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(this.workspaces)
+      return
     }
-
+    // get workspace list
+    axios.get(`${util.apiUrl}/devices/workspaces/`)
+        .then((response) => {
+          this.workspaces = util.convertDjangoArrayOfObjectsToSelectField(response.data)
+          this.$store.commit('setWorkspaces', response.data)
+        })
   }
 }
 </script>

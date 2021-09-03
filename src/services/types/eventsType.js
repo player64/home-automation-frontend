@@ -3,8 +3,9 @@ const eventTypes = {
     'sensor': 'Sensor'
 }
 
-const eventRules = [
-    '=', '>', '>=', '<=', '<',
-]
+const eventRules = {
+    '>': 'is greater than',
+    '<': 'is lower than',
+}
 
 export {eventTypes, eventRules}

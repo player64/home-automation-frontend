@@ -46,7 +46,7 @@ const factories = {
     },
 
     getEventsRules: () => {
-        return eventRules
+        return objectToArrayOfObjects(eventRules)
     },
 
     getDeviceTypeReadableFormat: (type) => {

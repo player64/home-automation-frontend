@@ -1,9 +1,9 @@
 # Home automation - Frontend VUE.js
-The purpose of this project is to develop a user-friendly web application where a user will be able
+This project aims to develop a user-friendly web application where a user will be able
 to manage its devices. By automating various tasks such as enable/disable based on the current
 environment state read from the sensors, electrical appliances will help reduce the energy bill, e.g.,
-the system will disable a heater if the temperature in the room reaches a certain value. This part is GUI for this project.
-It utilises the backend REST API of application available in the link 
+the system will disable a heater if the temperature in the room reaches a certain value. This part is GUI for the project.
+It utilises the backend REST API of the application available in the link.
 [Home automation backend Django](https://github.com/player64/home-automation-backend). 
 
 This project uses the following packages:
@@ -18,10 +18,10 @@ To install the project's dependencies use the below command.
 ```
 yarn install
 ```
-Before start copy the [.env.example](.env.example]) and rename depend of your environment, e.g., 
+Before start copy the [.env.example](.env.example]) and rename depend on your environment, e.g., 
 ```.env.production``` or ```.env.development```
 Update with the following the values. 
-* VUE_APP_API_URL - this the URL of the backend application this application consume REST API requests
+* VUE_APP_API_URL - the URL of backend the application consumes the REST API
 * VUE_APP_CAPTCHA_KEY - this is the ReCaptcha public key that can be obtained from this URL https://www.google.com/recaptcha/about/
 
 ### Compiles and hot-reloads for development

@@ -14,7 +14,7 @@ describe('Testing DeviceLogs component methods', () => {
                 }
             }
         })
-
+        axios.get.mockImplementationOnce(() => Promise.resolve([]))
         expect(wrapper.vm.sensorKeys()).toStrictEqual([
             {key: 'temperature', unit: '°C'},
             {key: 'humidity', unit: '%'}

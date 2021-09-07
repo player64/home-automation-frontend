@@ -36,19 +36,12 @@
     </v-main>
 
     <v-footer app v-if="isAuth"  :clipped-left="clipped">
-      Home automation &copy; {{year}}
+      Home automation | {{year}}
     </v-footer>
   </v-app>
 </template>
 
 <script>
-/**
- *       <v-spacer></v-spacer>
- sj
- *     <v-app-bar app>
- <h1 v-html="title"/>
- </v-app-bar>
- * */
 export default {
   name: 'App',
 
@@ -66,9 +59,6 @@ export default {
       ]
     }
   },
-  // data: () => ({
-  //   isAuth: this.$store.state.isAuthenticated
-  // }),
   computed: {
     title() {
       return this.$store.getters.title

@@ -2,19 +2,31 @@ import axios from '@/axios'
 import {shallowMount} from '@vue/test-utils'
 import DeviceLogs from '@/components/devices/DeviceLogs'
 
-jest.mock('axios')
+jest.mock('axios', () => {
+    return {
+        get: jest.fn(),
+    }
+})
 describe('Testing DeviceLogs component methods', () => {
 
     it('Sensor keys correct format', () => {
         const wrapper = shallowMount(DeviceLogs, {
             propsData: {
                 data: {
-                    sensor_type: 'am2301',
-                    logs: []
+                    data: {
+
+                    }
                 }
             }
         })
-        axios.get.mockImplementationOnce(() => Promise.resolve([]))
+        const logs = [{
+            time: '2021-08-25T01:00:00+01:00',
+            readings: {
+                humidity: 75.5,
+                temperature: 25.1
+            }
+        }]
+        axios.get.mockImplementationOnce(() => Promise.resolve(logs))
         expect(wrapper.vm.sensorKeys()).toStrictEqual([
             {key: 'temperature', unit: '°C'},
             {key: 'humidity', unit: '%'}

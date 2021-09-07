@@ -16,7 +16,7 @@ This project uses the following packages:
 ### Project setup
 To install the project's dependencies use the below command.
 ```
-yarn install
+yarn install --ignore-engines
 ```
 Before start copy the [.env.example](.env.example]) and rename depend on your environment, e.g., 
 ```.env.production``` or ```.env.development```

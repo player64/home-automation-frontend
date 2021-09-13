@@ -166,7 +166,7 @@ export default {
       this.form.firmware = this.device.firmware
       this.form.gpio = this.device.gpio
       this.form.sensor_type = this.device.sensor_type
-      this.form.workspace = this.device.workspace.pk
+      this.form.workspace = (this.device.workspace) ? this.device.workspace.pk : null
     }
 
     // add firmwares and sensor types
